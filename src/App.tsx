@@ -296,50 +296,75 @@ function SkillGrid({ skills }: { skills: SkillDef[] }): JSX.Element {
 	);
 }
 
-/* ---------- Research Feed (ECHT via GitHub) ---------- */
-function repoAge(iso: string): string {
-	const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
-	if (!isFinite(d)) return "";
-	if (d <= 0) return "heute";
-	if (d === 1) return "1d";
-	if (d < 30) return `${d}d`;
-	return `${Math.floor(d / 30)}mo`;
+/* ---------- Research Feed (ECHT via GitHub — kompakte Zeilen-Liste wie im persönlichen OS) ---------- */
+const fmtStars = (n: number): string => {
+	if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".0", "") + "M";
+	if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "k";
+	return String(n);
+};
+function timeAgo(iso: string): string {
+	if (iso === "") return "—";
+	const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+	if (!isFinite(diff)) return "—";
+	if (diff < 60) return "now";
+	if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+	if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+	if (diff < 86400 * 30) return `${Math.floor(diff / 86400)}d`;
+	return `${Math.floor(diff / (86400 * 30))}mo`;
 }
-function RepoCard({ r }: { r: GHRepo }): JSX.Element {
-	const open = (): void => { try { window.open(r.url, "_blank"); } catch (_) { /* */ } };
+function RepoRow({ repo }: { repo: GHRepo }): JSX.Element {
 	return (
-		<button className="featured" onClick={open} style={{ padding: "10px 12px", textAlign: "left", display: "flex", flexDirection: "column", gap: 4, cursor: "pointer", border: "1px solid var(--border-2)" }} title={r.url}>
-			<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-				<span className="mono" style={{ fontSize: 12, color: "#f5f5f5", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</span>
-				<span className="mono tnum" style={{ fontSize: 10, color: "var(--accent)", flexShrink: 0 }}>★ {fmtCompact(r.stars)}</span>
-			</div>
-			<span className="mono" style={{ fontSize: 10, color: "var(--muted)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" } as React.CSSProperties}>{r.description.length > 0 ? r.description : "—"}</span>
-			<div style={{ display: "flex", gap: 10 }}>
-				<span className="mono" style={{ fontSize: 9, color: "var(--dim)" }}>{r.owner}</span>
-				{r.language.length > 0 && <span className="mono" style={{ fontSize: 9, color: "var(--dim)" }}>{r.language}</span>}
-				<span className="mono" style={{ fontSize: 9, color: "var(--dim)" }}>↑ {repoAge(r.pushed_at)}</span>
-			</div>
-		</button>
+		<a href={repo.url} target="_blank" rel="noreferrer" className="repo-row">
+			<span className="mono tnum" style={{ flex: "0 0 56px", color: "var(--accent)", fontSize: 11.5, fontWeight: 600, textAlign: "right" }}>
+				{fmtStars(repo.stars)}★
+			</span>
+			<span className="mono" style={{ flex: "0 0 220px", color: "#f5f5f5", fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+				{repo.name}
+			</span>
+			<span className="mono" style={{ flex: 1, color: "var(--muted)", fontSize: 11, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
+				{repo.description}
+			</span>
+			<span className="mono" style={{ flex: "0 0 36px", color: "var(--dim)", fontSize: 10, textAlign: "right" }}>
+				{timeAgo(repo.pushed_at)}
+			</span>
+		</a>
 	);
 }
-function ResearchFeed({ research }: { research: ResearchData | null }): JSX.Element {
-	const sections = research?.sections.filter((s) => s.items.length > 0) ?? [];
+function ResearchFeed({ research, onRefresh }: { research: ResearchData | null; onRefresh: () => void }): JSX.Element {
+	if (research === null) {
+		return (
+			<div style={{ padding: "60px 18px", textAlign: "center", color: "var(--dim)", fontFamily: "'JetBrains Mono',monospace", letterSpacing: ".12em" }}>
+				▸ RECHERCHE-DATEN WERDEN GELADEN… <button className="tab" style={{ marginLeft: 12 }} onClick={onRefresh}>JETZT LADEN</button>
+			</div>
+		);
+	}
+	const sections = research.sections.filter((s) => s.items.length > 0);
+	const ageMin = Math.floor((Date.now() - new Date(research.fetched_at).getTime()) / 60000);
 	return (
-		<div style={{ margin: "8px 18px 18px" }}>
-			<div className="secdiv"><span>§ research · claude-ökosystem · github live · klick öffnet repo</span></div>
+		<div style={{ padding: "16px 18px 24px", display: "flex", flexDirection: "column", gap: 0 }}>
+			<div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 10, marginBottom: 12, borderBottom: "1px solid var(--border-2)" }}>
+				<div style={{ width: 7, height: 7, background: "var(--accent)", borderRadius: "50%", boxShadow: "0 0 8px var(--accent)" }} />
+				<span className="mono small-caps" style={{ color: "#f5f5f5", letterSpacing: ".2em", fontSize: 12, fontWeight: 600 }}>RECHERCHE · GITHUB</span>
+				<span style={{ color: "var(--dim)" }}>·</span>
+				<span className="mono" style={{ color: "var(--muted)", fontSize: 10.5, letterSpacing: ".06em" }}>claude-code · skills · subagents · auto-refresh</span>
+				<span style={{ flex: 1 }} />
+				<span className="mono" style={{ fontSize: 10, color: "var(--dim)" }}>vor <span style={{ color: "var(--text)" }}>{isFinite(ageMin) ? ageMin : 0}m</span></span>
+				<button className="tab" onClick={onRefresh} style={{ padding: "3px 10px", fontSize: 10 }}>↻</button>
+			</div>
 			{sections.length === 0 ? (
-				<div className="mono" style={{ color: "var(--dim)", fontSize: 11.5, padding: "10px 2px", lineHeight: 1.6 }}>
-					{research?.error ?? "lädt frische Repos von GitHub… (kurz)"}
-				</div>
+				<div className="mono" style={{ color: "var(--dim)", fontSize: 11.5, padding: "10px 2px" }}>{research.error ?? "lädt frische Repos von GitHub…"}</div>
 			) : (
-				sections.map((sec) => (
-					<div key={sec.id} style={{ marginTop: 14 }}>
-						<div className="mono small-caps" style={{ color: "var(--accent)", fontSize: 10, letterSpacing: ".16em", marginBottom: 8 }}>{sec.title}</div>
-						<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 8 }}>
-							{sec.items.slice(0, 8).map((r) => (<RepoCard key={r.url} r={r} />))}
-						</div>
-					</div>
-				))
+				<div className="repo-list">
+					{sections.map((section) => (
+						<React.Fragment key={section.id}>
+							<div className="section-divider">
+								<span className="mono small-caps" style={{ color: "var(--accent)", letterSpacing: ".16em", fontSize: 10, fontWeight: 600 }}>{section.title}</span>
+								<span className="mono" style={{ color: "var(--dim)", fontSize: 9.5 }}>{section.items.length} repos</span>
+							</div>
+							{section.items.map((repo) => (<RepoRow key={`${section.id}-${repo.url}`} repo={repo} />))}
+						</React.Fragment>
+					))}
+				</div>
 			)}
 		</div>
 	);
@@ -443,8 +468,10 @@ export function App(): JSX.Element {
 		refreshTokens();
 		refreshResearch(false);
 		const tokenId = window.setInterval(refreshTokens, 60_000);
+		// Research auto-aktualisieren: alle 30 Min frische Repos ziehen (respektiert den Cache).
+		const researchId = window.setInterval(() => refreshResearch(false), 30 * 60_000);
 		const localId = window.setInterval(() => { setTasks(loadTasks()); setActivity(loadActivity()); }, 4000);
-		return () => { window.clearInterval(tokenId); window.clearInterval(localId); };
+		return () => { window.clearInterval(tokenId); window.clearInterval(researchId); window.clearInterval(localId); };
 	}, [refreshTokens, refreshResearch]);
 
 	const onToggleTask = useCallback((line: number): void => {
@@ -477,7 +504,7 @@ export function App(): JSX.Element {
 						</div>
 					</>
 				)}
-				{tab === "RESEARCH" && <ResearchFeed research={research} />}
+				{tab === "RESEARCH" && <ResearchFeed research={research} onRefresh={() => refreshResearch(true)} />}
 			</div>
 			<ChatDrawer />
 			<StatusBar />

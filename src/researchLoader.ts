@@ -32,7 +32,7 @@ export interface ResearchData {
 }
 
 const CACHE_FILE = join(homeDir, ".agentic-os", "research.json");
-const REFRESH_MS = 6 * 60 * 60 * 1000; // 6h
+const REFRESH_MS = 2 * 60 * 60 * 1000; // 2h — frisch genug, schont GitHub-Rate-Limit
 
 // stars:>N filtert die 0-Stern-Zufalls-Repos raus → Qualität statt Rauschen.
 const QUERIES: Array<{ id: string; title: string; q: string; sort: "updated" | "stars" }> = [
