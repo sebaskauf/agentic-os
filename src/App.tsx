@@ -70,10 +70,12 @@ function useTick(ms = 1000): void {
 	}, [ms]);
 }
 
-/* ---------- Header ---------- */
-function Header({ onRefresh, fetchedAt }: { onRefresh: () => void; fetchedAt: string }): JSX.Element {
+/* ---------- Header (mit Tabs) ---------- */
+type TabId = "OVERVIEW" | "RESEARCH";
+function Header({ tab, setTab, onRefresh, fetchedAt }: { tab: TabId; setTab: (t: TabId) => void; onRefresh: () => void; fetchedAt: string }): JSX.Element {
+	const TABS: Array<[TabId, string]> = [["OVERVIEW", "ÜBERSICHT"], ["RESEARCH", "RESEARCH"]];
 	return (
-		<div style={{ padding: "14px 18px 12px" }}>
+		<div style={{ padding: "14px 18px 10px" }}>
 			<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--accent)" }}>
@@ -98,6 +100,13 @@ function Header({ onRefresh, fetchedAt }: { onRefresh: () => void; fetchedAt: st
 						<span className="tt">REFRESH</span>
 					</button>
 				</div>
+			</div>
+			<div style={{ display: "flex", gap: 6, marginTop: 12 }}>
+				{TABS.map(([t, label], i) => (
+					<button key={t} className={"tab " + (tab === t ? "active" : "")} onClick={() => setTab(t)}>
+						<span className="ix">[{String(i).padStart(2, "0")}]</span> {label}
+					</button>
+				))}
 			</div>
 		</div>
 	);
@@ -228,11 +237,32 @@ function StatsRow({ counts, tokens }: { counts: { skills: number; agents: number
 	);
 }
 
-/* ---------- Skill Grid (ECHT, kategorisiert) ---------- */
+/* ---------- Skill Grid (ECHT — wichtigste ~10 zuerst, Rest aufklappbar) ---------- */
+const COLLAPSED_COUNT = 10;
+// Bevorzugte Skills (die wir spaeter mitliefern) — stehen oben, wenn vorhanden.
+const FEATURED = [
+	"heute-planen", "woche-planen", "morgen-briefing", "mails-pruefen",
+	"tiefe-recherche", "deep-research", "skripte-schreiben", "remotion-broll",
+	"session-handoff", "llm-council", "content-pipeline", "content-ideas",
+];
+function featuredRank(name: string): number {
+	const i = FEATURED.findIndex((f) => name === f || name.includes(f));
+	return i === -1 ? FEATURED.length + 1 : i;
+}
+function SkillBtn({ s }: { s: SkillDef }): JSX.Element {
+	return (
+		<button className="skbtn" onClick={() => runCommand(`/${s.name}`)} title={`Skill "${s.name}" (${s.category}) ans aktive Terminal senden`}>
+			<span className="dot" />
+			<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
+		</button>
+	);
+}
 function SkillGrid({ skills }: { skills: SkillDef[] }): JSX.Element {
-	const byCat: Record<string, SkillDef[]> = {};
-	for (const s of skills) (byCat[s.category] ??= []).push(s);
-	const cats = Object.keys(byCat).sort();
+	const [expanded, setExpanded] = useState<boolean>(false);
+	// Sortiere: Featured zuerst (in FEATURED-Reihenfolge), dann alphabetisch.
+	const sorted = [...skills].sort((a, b) => featuredRank(a.name) - featuredRank(b.name) || a.name.localeCompare(b.name));
+	const top = sorted.slice(0, COLLAPSED_COUNT);
+	const rest = sorted.slice(COLLAPSED_COUNT);
 
 	return (
 		<div style={{ margin: "14px 18px 0" }}>
@@ -243,19 +273,24 @@ function SkillGrid({ skills }: { skills: SkillDef[] }): JSX.Element {
 					Sag deinem Claude Code, welche Skills du willst — sie erscheinen hier automatisch.
 				</div>
 			) : (
-				cats.map((cat) => (
-					<div key={cat} style={{ marginTop: 8 }}>
-						<div className="mono small-caps" style={{ color: "var(--dim)", fontSize: 9, letterSpacing: ".18em", marginBottom: 5 }}>{cat}</div>
-						<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 7 }}>
-							{(byCat[cat] ?? []).map((s) => (
-								<button key={s.name} className="skbtn" onClick={() => runCommand(`/${s.name}`)} title={`Skill "${s.name}" ans aktive Terminal senden`}>
-									<span className="dot" />
-									<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
-								</button>
-							))}
-						</div>
+				<>
+					<div className="mono small-caps" style={{ color: "var(--dim)", fontSize: 9, letterSpacing: ".18em", marginBottom: 5 }}>
+						{expanded ? "Alle Skills" : "Wichtigste"}
 					</div>
-				))
+					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 7 }}>
+						{top.map((s) => (<SkillBtn key={s.name} s={s} />))}
+						{expanded && rest.map((s) => (<SkillBtn key={s.name} s={s} />))}
+					</div>
+					{rest.length > 0 && (
+						<button
+							className="mono"
+							onClick={() => setExpanded((v) => !v)}
+							style={{ marginTop: 8, padding: "5px 12px", background: "transparent", border: "1px solid var(--border-2)", borderRadius: 4, color: "var(--accent)", fontSize: 10.5, letterSpacing: ".1em", cursor: "pointer" }}
+						>
+							{expanded ? "▴ weniger anzeigen" : `▾ alle ${skills.length} Skills anzeigen (+${rest.length})`}
+						</button>
+					)}
+				</>
 			)}
 		</div>
 	);
@@ -290,21 +325,18 @@ function RepoCard({ r }: { r: GHRepo }): JSX.Element {
 function ResearchFeed({ research }: { research: ResearchData | null }): JSX.Element {
 	const sections = research?.sections.filter((s) => s.items.length > 0) ?? [];
 	return (
-		<div className="featured" style={{ padding: "12px 14px" }}>
-			<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-				<span className="ctitle"><Icons.search style={{ color: "var(--accent)" }} /> research · claude-ökosystem</span>
-				<span className="mono" style={{ color: "var(--dim)", fontSize: 9, letterSpacing: ".08em" }}>github · live</span>
-			</div>
+		<div style={{ margin: "8px 18px 18px" }}>
+			<div className="secdiv"><span>§ research · claude-ökosystem · github live · klick öffnet repo</span></div>
 			{sections.length === 0 ? (
-				<div className="mono" style={{ color: "var(--dim)", fontSize: 11, padding: "6px 0" }}>
-					{research?.error ?? "lädt frische Repos…"}
+				<div className="mono" style={{ color: "var(--dim)", fontSize: 11.5, padding: "10px 2px", lineHeight: 1.6 }}>
+					{research?.error ?? "lädt frische Repos von GitHub… (kurz)"}
 				</div>
 			) : (
-				sections.slice(0, 1).map((sec) => (
-					<div key={sec.id}>
-						<div className="mono small-caps" style={{ color: "var(--dim)", fontSize: 9, letterSpacing: ".16em", marginBottom: 6 }}>{sec.title}</div>
-						<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-							{sec.items.slice(0, 6).map((r) => (<RepoCard key={r.url} r={r} />))}
+				sections.map((sec) => (
+					<div key={sec.id} style={{ marginTop: 14 }}>
+						<div className="mono small-caps" style={{ color: "var(--accent)", fontSize: 10, letterSpacing: ".16em", marginBottom: 8 }}>{sec.title}</div>
+						<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 8 }}>
+							{sec.items.slice(0, 8).map((r) => (<RepoCard key={r.url} r={r} />))}
 						</div>
 					</div>
 				))
@@ -385,6 +417,7 @@ function StatusBar(): JSX.Element {
 
 /* ---------- App Root ---------- */
 export function App(): JSX.Element {
+	const [tab, setTab] = useState<TabId>("OVERVIEW");
 	const [tokens, setTokens] = useState<TokenStats | null>(null);
 	const [research, setResearch] = useState<ResearchData | null>(() => loadResearchCache());
 	const [skills, setSkills] = useState<SkillDef[]>([]);
@@ -431,18 +464,20 @@ export function App(): JSX.Element {
 
 	return (
 		<div className="pane">
-			<Header onRefresh={onRefresh} fetchedAt={tokens?.fetched_at ?? ""} />
+			<Header tab={tab} setTab={setTab} onRefresh={onRefresh} fetchedAt={tokens?.fetched_at ?? ""} />
 			<div className="dashboard-scroll">
-				<TokenBurn tokens={tokens} />
-				<StatsRow counts={counts} tokens={tokens} />
-				<SkillGrid skills={skills} />
-				<div style={{ margin: "14px 18px 18px", display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 10 }}>
-					<ResearchFeed research={research} />
-					<div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-						<TasksWidget tasks={tasks} onToggle={onToggleTask} />
-						<RecentRuns activity={activity} />
-					</div>
-				</div>
+				{tab === "OVERVIEW" && (
+					<>
+						<TokenBurn tokens={tokens} />
+						<StatsRow counts={counts} tokens={tokens} />
+						<SkillGrid skills={skills} />
+						<div style={{ margin: "14px 18px 18px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+							<TasksWidget tasks={tasks} onToggle={onToggleTask} />
+							<RecentRuns activity={activity} />
+						</div>
+					</>
+				)}
+				{tab === "RESEARCH" && <ResearchFeed research={research} />}
 			</div>
 			<ChatDrawer />
 			<StatusBar />
