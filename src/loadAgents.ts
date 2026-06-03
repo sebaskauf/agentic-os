@@ -35,7 +35,7 @@ export function loadAgents(): AgentDef[] {
 				});
 			}
 		} catch (e) {
-			console.error("[claude-cockpit] failed agent parse:", f, e);
+			console.error("[agentic-os] failed agent parse:", f, e);
 		}
 	}
 	return out.sort((a, b) => a.name.localeCompare(b.name));
@@ -73,7 +73,7 @@ export interface ChatSessionState {
 	updated_at: string;
 }
 
-const CHATS_DIR = join(homedir(), ".claude-cockpit/chats");
+const CHATS_DIR = join(homedir(), ".agentic-os/chats");
 
 function ensureDir(): void {
 	if (!existsSync(CHATS_DIR)) {
@@ -92,7 +92,7 @@ export function loadChat(agentName: string): ChatSessionState | null {
 	try {
 		return JSON.parse(readFileSync(path, "utf-8")) as ChatSessionState;
 	} catch (e) {
-		console.error("[claude-cockpit] failed chat load:", agentName, e);
+		console.error("[agentic-os] failed chat load:", agentName, e);
 		return null;
 	}
 }
@@ -104,7 +104,7 @@ export function saveChat(state: ChatSessionState): void {
 	try {
 		writeFileSync(path, JSON.stringify(state, null, 2), "utf-8");
 	} catch (e) {
-		console.error("[claude-cockpit] failed chat save:", state.agent, e);
+		console.error("[agentic-os] failed chat save:", state.agent, e);
 	}
 }
 

@@ -31,10 +31,10 @@ export interface TabsState {
 	activeId: string | null;
 }
 
-const TABS_FILE = join(homedir(), ".claude-cockpit/chat-tabs.json");
+const TABS_FILE = join(homedir(), ".agentic-os/chat-tabs.json");
 
 function ensureDir(): void {
-	const dir = join(homedir(), ".claude-cockpit");
+	const dir = join(homedir(), ".agentic-os");
 	if (!existsSync(dir)) {
 		try { mkdirSync(dir, { recursive: true }); } catch (_) { /* ignore */ }
 	}
@@ -65,7 +65,7 @@ export function loadTabs(): TabsState {
 		}
 		return parsed;
 	} catch (e) {
-		console.error("[claude-cockpit] failed loading chat-tabs.json:", e);
+		console.error("[agentic-os] failed loading chat-tabs.json:", e);
 		const defaultId = makeUUID();
 		return {
 			tabs: [{ id: defaultId, name: "claude", type: "claude", workspace: "home" }],
@@ -79,7 +79,7 @@ export function saveTabs(state: TabsState): void {
 	try {
 		writeFileSync(TABS_FILE, JSON.stringify(state, null, 2), "utf-8");
 	} catch (e) {
-		console.error("[claude-cockpit] failed saving chat-tabs.json:", e);
+		console.error("[agentic-os] failed saving chat-tabs.json:", e);
 	}
 }
 

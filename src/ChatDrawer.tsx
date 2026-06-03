@@ -31,7 +31,7 @@ function sendKeystroke(sessionName: string, key: string): void {
 function sendCommandWithAutoConfirm(sessionName: string, cmd: string): void {
 	const r = sendMessage(sessionName, cmd);
 	if (!r.ok) {
-		console.error("[claude-cockpit] sendCommandWithAutoConfirm failed:", r.error);
+		console.error("[agentic-os] sendCommandWithAutoConfirm failed:", r.error);
 		return;
 	}
 	// Auto-Enter the confirm dialog. Two delays in case claude is slow rendering.
@@ -55,7 +55,7 @@ function applyPermissionMode(sessionName: string, target: string, current?: stri
 	const currentIdx = PERMISSION_CYCLE.indexOf(currentMode);
 	const targetIdx = PERMISSION_CYCLE.indexOf(target);
 	if (currentIdx === -1 || targetIdx === -1) {
-		console.warn("[claude-cockpit] unknown permission mode:", { currentMode, target });
+		console.warn("[agentic-os] unknown permission mode:", { currentMode, target });
 		return;
 	}
 	const steps = (targetIdx - currentIdx + PERMISSION_CYCLE.length) % PERMISSION_CYCLE.length;
@@ -65,10 +65,10 @@ function applyPermissionMode(sessionName: string, target: string, current?: stri
 	}
 }
 
-const DRAWER_HEIGHT_KEY = "claude-cockpit-drawer-height";
+const DRAWER_HEIGHT_KEY = "agentic-os-drawer-height";
 const DEFAULT_HEIGHT = 340;
 const MIN_HEIGHT = 320;  // below this, xterm visible-area becomes too small for content to be readable
-const DRAWER_COLLAPSED_KEY = "claude-cockpit-drawer-collapsed";
+const DRAWER_COLLAPSED_KEY = "agentic-os-drawer-collapsed";
 const MAX_HEIGHT_RATIO = 0.85;
 const POLL_MS = 250;
 const MAX_TABS = 7;
@@ -312,7 +312,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 		}
 		const result = sendMessage(sessionName, text);
 		if (!result.ok) {
-			console.error("[claude-cockpit] send failed:", result.error);
+			console.error("[agentic-os] send failed:", result.error);
 			alert(`Send fehlgeschlagen: ${result.error ?? "unknown"}`);
 			return;
 		}
@@ -351,7 +351,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 		}
 		const result = sendMessage(sessionName, text);
 		if (!result.ok) {
-			console.error("[claude-cockpit] sendRaw failed:", result.error);
+			console.error("[agentic-os] sendRaw failed:", result.error);
 			return;
 		}
 		setInput("");
@@ -366,7 +366,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 	// Status-bar click → send slash-command to claude (pass-through, claude shows its picker)
 	const sendSlashCommand = useCallback((cmd: string): void => {
 		const result = sendMessage(sessionName, cmd);
-		if (!result.ok) console.error("[claude-cockpit] slash-command failed:", result.error);
+		if (!result.ok) console.error("[agentic-os] slash-command failed:", result.error);
 	}, [sessionName]);
 
 	// Global keyboard handler — intercept ESC so Obsidian doesn't catch it (would open Graph View etc.).
@@ -375,7 +375,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 		const onKey = (e: KeyboardEvent): void => {
 			const target = e.target as HTMLElement | null;
 			// Only intercept when keypress is within our plugin's view
-			if (target === null || target.closest === undefined || target.closest(".claude-cockpit-root") === null) return;
+			if (target === null || target.closest === undefined || target.closest(".agentic-os-root") === null) return;
 
 			// ESC always goes to claude (so user can close any TUI modal). Stop Obsidian.
 			if (e.key === "Escape") {
@@ -489,7 +489,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 				const reader = new FileReader();
 				reader.onload = (): void => {
 					try {
-						const dir = join(tmpdir(), "claude-cockpit-paste");
+						const dir = join(tmpdir(), "agentic-os-paste");
 						if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 						const filename = `paste-${Date.now()}.${ext}`;
 						const fullpath = join(dir, filename);
@@ -501,7 +501,7 @@ export function ChatPane({ tab, onDraftChange, onTabPatch, commands, files }: Ch
 							onDraftChange(newInput);
 						}
 					} catch (err) {
-						console.error("[claude-cockpit] paste-image failed:", err);
+						console.error("[agentic-os] paste-image failed:", err);
 					}
 				};
 				reader.readAsArrayBuffer(file);
@@ -797,7 +797,7 @@ function UsageModal({ onClose }: { onClose: () => void }): JSX.Element {
 		const fs = require("fs") as typeof import("fs");
 		const os = require("os") as typeof import("os");
 		const path = require("path") as typeof import("path");
-		const p = path.join(os.homedir(), ".claude-cockpit/tokens.json");
+		const p = path.join(os.homedir(), ".agentic-os/tokens.json");
 		if (fs.existsSync(p)) tokens = JSON.parse(fs.readFileSync(p, "utf-8"));
 	} catch (_) { /* ignore */ }
 	const block = tokens?.active;
@@ -1019,7 +1019,7 @@ export function ChatDrawer(): JSX.Element {
 		const app = (window as any).app;
 		if (app === undefined || app === null) return;
 		const leaf = app.workspace.getLeaf("split", "vertical");
-		void leaf.setViewState({ type: "claude-cockpit-terminal", active: true, state: { tab } });
+		void leaf.setViewState({ type: "agentic-os-terminal", active: true, state: { tab } });
 		app.workspace.revealLeaf(leaf);
 	};
 

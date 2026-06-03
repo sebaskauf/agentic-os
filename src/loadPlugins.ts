@@ -86,7 +86,7 @@ export function loadPlugins(): PluginInfo[] {
 				});
 			}
 		}
-	} catch (e) { console.error("[claude-cockpit] loadPlugins:", e); }
+	} catch (e) { console.error("[agentic-os] loadPlugins:", e); }
 	return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 

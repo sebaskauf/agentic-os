@@ -33,7 +33,7 @@ function getPluginDir(): string {
 		const app = (window as any).app;
 		const adapter = app?.vault?.adapter;
 		if (adapter !== undefined && typeof adapter.getBasePath === "function") {
-			return path.join(adapter.getBasePath(), app.vault.configDir, "plugins", "claude-cockpit");
+			return path.join(adapter.getBasePath(), app.vault.configDir, "plugins", "agentic-os");
 		}
 	} catch (_) { /* ignore */ }
 	return "";
@@ -68,10 +68,10 @@ export function loadPty(): NodePty | null {
 			chmodMacBinaries(nativeArchDir, process.arch);
 			try {
 				cached = nodeRequire(entry) as NodePty;
-				console.log(`[claude-cockpit] node-pty geladen aus native/${platArch}`);
+				console.log(`[agentic-os] node-pty geladen aus native/${platArch}`);
 				return cached;
 			} catch (e) {
-				console.error(`[claude-cockpit] native/${platArch} laden fehlgeschlagen:`, e);
+				console.error(`[agentic-os] native/${platArch} laden fehlgeschlagen:`, e);
 			}
 		}
 	}
@@ -79,12 +79,12 @@ export function loadPty(): NodePty | null {
 	// 2) Dev-Fallback: node_modules/node-pty
 	try {
 		cached = nodeRequire("node-pty") as NodePty;
-		console.log("[claude-cockpit] node-pty geladen aus node_modules (Dev-Fallback)");
+		console.log("[agentic-os] node-pty geladen aus node_modules (Dev-Fallback)");
 		return cached;
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e);
 		loadError = msg;
-		console.error("[claude-cockpit] node-pty konnte nicht geladen werden:", msg);
+		console.error("[agentic-os] node-pty konnte nicht geladen werden:", msg);
 		const hint = /NODE_MODULE_VERSION|different Node\.js/i.test(msg)
 			? "ABI-Mismatch — Plugin gegen falsche Electron-Version gebaut."
 			: `Prebuild fehlt fuer ${platArch}?`;

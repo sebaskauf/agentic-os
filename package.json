@@ -1,5 +1,5 @@
 {
-	"name": "claude-cockpit",
+	"name": "agentic-os",
 	"version": "0.1.0",
 	"description": "Claude Code in einem eingebetteten Terminal für Obsidian",
 	"main": "main.js",

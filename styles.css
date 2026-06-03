@@ -17,10 +17,10 @@
   height: 0;
 }
 
-/* Force the view-content element (which is ALSO our .claude-cockpit-root container) to scroll vertically.
-   Specificity dance: view-content is the same DOM-element as claude-cockpit-root, so we must use !important
+/* Force the view-content element (which is ALSO our .agentic-os-root container) to scroll vertically.
+   Specificity dance: view-content is the same DOM-element as agentic-os-root, so we must use !important
    to override Obsidian's defaults. */
-.workspace-leaf-content[data-type="claude-cockpit-view"] .view-content.claude-cockpit-root {
+.workspace-leaf-content[data-type="agentic-os-view"] .view-content.agentic-os-root {
   padding: 0 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -30,7 +30,7 @@
 
 /* Terminal-Leaf (REBUILD-PLAN Schritt 2): eigener Pane braucht volle Höhe,
    sonst kollabiert xterm auf 0px. Flex-Column, damit .chat-pane den Rest füllt. */
-.workspace-leaf-content[data-type="claude-cockpit-terminal"] .view-content.claude-cockpit-root {
+.workspace-leaf-content[data-type="agentic-os-terminal"] .view-content.agentic-os-root {
   padding: 0 !important;
   overflow: hidden !important;
   height: 100% !important;
@@ -38,13 +38,13 @@
   display: flex !important;
   flex-direction: column !important;
 }
-.workspace-leaf-content[data-type="claude-cockpit-terminal"] .chat-pane {
+.workspace-leaf-content[data-type="agentic-os-terminal"] .chat-pane {
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
 }
 
-.claude-cockpit-root {
+.agentic-os-root {
   --bg: #0a0a0a;
   --bg-2: #0d0d0d;
   --surface: #161616;
@@ -71,9 +71,9 @@
   font-feature-settings: "ss01", "cv11";
 }
 
-.claude-cockpit-root * { box-sizing: border-box; }
+.agentic-os-root * { box-sizing: border-box; }
 
-.claude-cockpit-root .pane {
+.agentic-os-root .pane {
   width: 100%;
   max-width: none;
   margin: 0;
@@ -85,21 +85,21 @@
   min-height: 100%;
 }
 
-.claude-cockpit-root .mono {
+.agentic-os-root .mono {
   font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   font-feature-settings: "tnum", "zero";
 }
 
-.claude-cockpit-root .tnum { font-variant-numeric: tabular-nums; }
+.agentic-os-root .tnum { font-variant-numeric: tabular-nums; }
 
-.claude-cockpit-root .small-caps {
+.agentic-os-root .small-caps {
   letter-spacing: .14em;
   text-transform: uppercase;
   font-size: 11px;
 }
 
 /* hatch pattern */
-.claude-cockpit-root .hatch {
+.agentic-os-root .hatch {
   background-color: #1a1a1a;
   background-image: repeating-linear-gradient(
     135deg,
@@ -107,7 +107,7 @@
     transparent 1px 7px
   );
 }
-.claude-cockpit-root .hatch-dim {
+.agentic-os-root .hatch-dim {
   background-image: repeating-linear-gradient(
     135deg,
     rgba(255,107,26,0.06) 0 1px,
@@ -116,20 +116,20 @@
 }
 
 /* corner brackets */
-.claude-cockpit-root .bracket {
+.agentic-os-root .bracket {
   position: absolute;
   width: 10px;
   height: 10px;
   border-color: rgba(255,107,26,.45);
 }
-.claude-cockpit-root .bracket.tl { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
-.claude-cockpit-root .bracket.tr { top: -1px; right: -1px; border-top: 1px solid; border-right: 1px solid; }
-.claude-cockpit-root .bracket.bl { bottom: -1px; left: -1px; border-bottom: 1px solid; border-left: 1px solid; }
-.claude-cockpit-root .bracket.br { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+.agentic-os-root .bracket.tl { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.agentic-os-root .bracket.tr { top: -1px; right: -1px; border-top: 1px solid; border-right: 1px solid; }
+.agentic-os-root .bracket.bl { bottom: -1px; left: -1px; border-bottom: 1px solid; border-left: 1px solid; }
+.agentic-os-root .bracket.br { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
 
 /* terminal cursor blink */
 @keyframes agentic-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-.claude-cockpit-root .cursor {
+.agentic-os-root .cursor {
   display: inline-block;
   width: 7px;
   height: 13px;
@@ -142,7 +142,7 @@
 
 /* live dot */
 @keyframes agentic-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.85); } }
-.claude-cockpit-root .live-dot {
+.agentic-os-root .live-dot {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -151,11 +151,11 @@
   box-shadow: 0 0 8px #ff3030;
   animation: agentic-pulse 1.4s ease-in-out infinite;
 }
-.claude-cockpit-root .live-dot.green { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
-.claude-cockpit-root .live-dot.amber { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.agentic-os-root .live-dot.green { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.agentic-os-root .live-dot.amber { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
 
 /* tab pill */
-.claude-cockpit-root .tab {
+.agentic-os-root .tab {
   padding: 6px 12px;
   border-radius: 4px;
   border: 1px solid var(--border);
@@ -171,16 +171,16 @@
   align-items: center;
   gap: 6px;
 }
-.claude-cockpit-root .tab:hover { color: var(--text); border-color: #3a3a3a; }
-.claude-cockpit-root .tab.active {
+.agentic-os-root .tab:hover { color: var(--text); border-color: #3a3a3a; }
+.agentic-os-root .tab.active {
   background: var(--accent);
   color: #0a0a0a;
   border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(255,107,26,.4), 0 0 18px -2px rgba(255,107,26,.5);
 }
-.claude-cockpit-root .tab.active .ix { color: #0a0a0a; opacity: .6; }
+.agentic-os-root .tab.active .ix { color: #0a0a0a; opacity: .6; }
 
-.claude-cockpit-root .iconbtn {
+.agentic-os-root .iconbtn {
   width: 28px;
   height: 28px;
   display: inline-flex;
@@ -193,14 +193,14 @@
   cursor: pointer;
   transition: all .15s;
 }
-.claude-cockpit-root .iconbtn:hover {
+.agentic-os-root .iconbtn:hover {
   color: var(--text);
   border-color: #3a3a3a;
   background: #161616;
 }
 
 /* skill button */
-.claude-cockpit-root .skbtn {
+.agentic-os-root .skbtn {
   background: #161616;
   border: 1px solid var(--border);
   color: var(--text);
@@ -219,7 +219,7 @@
   text-align: center;
   position: relative;
 }
-.claude-cockpit-root .skbtn .kbd {
+.agentic-os-root .skbtn .kbd {
   position: absolute;
   top: 5px;
   right: 6px;
@@ -231,29 +231,29 @@
   padding: 0 3px;
   line-height: 11px;
 }
-.claude-cockpit-root .skbtn .dot {
+.agentic-os-root .skbtn .dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--dim);
 }
-.claude-cockpit-root .skbtn.hot .dot {
+.agentic-os-root .skbtn.hot .dot {
   background: var(--accent);
   box-shadow: 0 0 6px var(--accent);
 }
-.claude-cockpit-root .skbtn:hover {
+.agentic-os-root .skbtn:hover {
   background: #222;
   border-color: #3f3f3f;
   color: #fff;
 }
-.claude-cockpit-root .skbtn:focus-visible {
+.agentic-os-root .skbtn:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(255,107,26,.25);
 }
 
 /* checkbox */
-.claude-cockpit-root .chk {
+.agentic-os-root .chk {
   width: 14px;
   height: 14px;
   border: 1px solid #3a3a3a;
@@ -266,25 +266,25 @@
   transition: all .12s;
   flex: 0 0 auto;
 }
-.claude-cockpit-root .chk:hover { border-color: #555; }
-.claude-cockpit-root .chk.on {
+.agentic-os-root .chk:hover { border-color: #555; }
+.agentic-os-root .chk.on {
   background: var(--accent);
   border-color: var(--accent);
   box-shadow: 0 0 8px -2px var(--accent);
 }
-.claude-cockpit-root .chk svg { opacity: 0; color: #0a0a0a; }
-.claude-cockpit-root .chk.on svg { opacity: 1; }
+.agentic-os-root .chk svg { opacity: 0; color: #0a0a0a; }
+.agentic-os-root .chk.on svg { opacity: 1; }
 
 /* schedule row */
-.claude-cockpit-root .sch-row {
+.agentic-os-root .sch-row {
   padding: 7px 0;
   border-bottom: 1px dashed #1c1c1c;
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.claude-cockpit-root .sch-row:last-child { border-bottom: none; }
-.claude-cockpit-root .time-pill {
+.agentic-os-root .sch-row:last-child { border-bottom: none; }
+.agentic-os-root .time-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -300,7 +300,7 @@
 }
 
 /* stat card */
-.claude-cockpit-root .stat-card {
+.agentic-os-root .stat-card {
   background: linear-gradient(180deg, #181818 0%, #131313 100%);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -308,14 +308,14 @@
   position: relative;
   overflow: hidden;
 }
-.claude-cockpit-root .stat-card .glow {
+.agentic-os-root .stat-card .glow {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(120px 80px at 100% 0%, var(--glow, rgba(255,255,255,0)) 0%, transparent 70%);
   opacity: .55;
 }
-.claude-cockpit-root .stat-card .plat {
+.agentic-os-root .stat-card .plat {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -329,7 +329,7 @@
 }
 
 /* sparkline */
-.claude-cockpit-root .spark {
+.agentic-os-root .spark {
   display: block;
   width: 100%;
   height: 22px;
@@ -337,7 +337,7 @@
 }
 
 /* featured banner */
-.claude-cockpit-root .featured {
+.agentic-os-root .featured {
   position: relative;
   background:
     radial-gradient(380px 120px at 6% 50%, rgba(255,107,26,.18) 0%, transparent 60%),
@@ -347,7 +347,7 @@
   padding: 14px 16px;
   overflow: hidden;
 }
-.claude-cockpit-root .featured::before {
+.agentic-os-root .featured::before {
   content: "";
   position: absolute;
   left: 0;
@@ -359,7 +359,7 @@
 }
 
 /* chip */
-.claude-cockpit-root .chip {
+.agentic-os-root .chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -372,7 +372,7 @@
   letter-spacing: .06em;
   color: var(--text);
 }
-.claude-cockpit-root .chip .lbl {
+.agentic-os-root .chip .lbl {
   color: var(--muted);
   font-size: 9.5px;
   letter-spacing: .14em;
@@ -380,7 +380,7 @@
 }
 
 /* divider */
-.claude-cockpit-root .secdiv {
+.agentic-os-root .secdiv {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -391,8 +391,8 @@
   text-transform: uppercase;
   margin: 18px 0 10px;
 }
-.claude-cockpit-root .secdiv:before,
-.claude-cockpit-root .secdiv:after {
+.agentic-os-root .secdiv:before,
+.agentic-os-root .secdiv:after {
   content: "";
   flex: 1;
   height: 1px;
@@ -401,12 +401,12 @@
 
 /* burn-fill shimmer */
 @keyframes agentic-flow { from { background-position: 0 0; } to { background-position: 24px 0; } }
-.claude-cockpit-root .burn-fill {
+.agentic-os-root .burn-fill {
   background: linear-gradient(90deg, #ff7a2a, #ff5410);
   box-shadow: 0 0 12px rgba(255,107,26,.45), inset 0 1px 0 rgba(255,255,255,.18);
   position: relative;
 }
-.claude-cockpit-root .burn-fill::after {
+.agentic-os-root .burn-fill::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -415,7 +415,7 @@
 }
 
 /* card title */
-.claude-cockpit-root .ctitle {
+.agentic-os-root .ctitle {
   color: var(--muted);
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
@@ -427,7 +427,7 @@
 }
 
 /* faint grid backdrop */
-.claude-cockpit-root .pane::before {
+.agentic-os-root .pane::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -441,15 +441,15 @@
 }
 
 /* ensure all interactive elements sit ABOVE the grid backdrop */
-.claude-cockpit-root .pane > * { position: relative; z-index: 1; }
-.claude-cockpit-root button,
-.claude-cockpit-root textarea,
-.claude-cockpit-root input { cursor: pointer; }
-.claude-cockpit-root textarea,
-.claude-cockpit-root input { cursor: text; }
+.agentic-os-root .pane > * { position: relative; z-index: 1; }
+.agentic-os-root button,
+.agentic-os-root textarea,
+.agentic-os-root input { cursor: pointer; }
+.agentic-os-root textarea,
+.agentic-os-root input { cursor: text; }
 
 /* obsidian-ish chrome */
-.claude-cockpit-root .pane-chrome {
+.agentic-os-root .pane-chrome {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -462,23 +462,23 @@
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.claude-cockpit-root .pane-chrome .dots { display: flex; gap: 5px; }
-.claude-cockpit-root .pane-chrome .dots span {
+.agentic-os-root .pane-chrome .dots { display: flex; gap: 5px; }
+.agentic-os-root .pane-chrome .dots span {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: #1f1f1f;
 }
-.claude-cockpit-root .pane-chrome .dots span:nth-child(1) { background: #3a2520; }
-.claude-cockpit-root .pane-chrome .dots span:nth-child(2) { background: #2a261a; }
-.claude-cockpit-root .pane-chrome .dots span:nth-child(3) { background: #1c2a22; }
+.agentic-os-root .pane-chrome .dots span:nth-child(1) { background: #3a2520; }
+.agentic-os-root .pane-chrome .dots span:nth-child(2) { background: #2a261a; }
+.agentic-os-root .pane-chrome .dots span:nth-child(3) { background: #1c2a22; }
 
-.claude-cockpit-root .tooltip { position: relative; }
-.claude-cockpit-root .tooltip:hover .tt {
+.agentic-os-root .tooltip { position: relative; }
+.agentic-os-root .tooltip:hover .tt {
   opacity: 1;
   transform: translate(-50%, -2px);
 }
-.claude-cockpit-root .tt {
+.agentic-os-root .tt {
   position: absolute;
   left: 50%;
   top: 100%;
@@ -500,7 +500,7 @@
 }
 
 /* token-bar ticks */
-.claude-cockpit-root .ticks {
+.agentic-os-root .ticks {
   display: grid;
   grid-template-columns: repeat(50, 1fr);
   gap: 2px;
@@ -508,16 +508,16 @@
   margin-top: 6px;
   opacity: .6;
 }
-.claude-cockpit-root .ticks i {
+.agentic-os-root .ticks i {
   display: block;
   height: 100%;
   background: #1c1c1c;
   border-radius: 1px;
 }
-.claude-cockpit-root .ticks i.on { background: var(--accent); }
+.agentic-os-root .ticks i.on { background: var(--accent); }
 
 /* agent input wrap (extra addition for tmux integration) */
-.claude-cockpit-root .agent-input-wrap {
+.agentic-os-root .agent-input-wrap {
   margin: 0 18px 0;
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -527,7 +527,7 @@
   flex-direction: column;
   gap: 8px;
 }
-.claude-cockpit-root .agent-input {
+.agentic-os-root .agent-input {
   background: #0a0a0a;
   color: var(--text);
   border: 1px solid var(--border);
@@ -539,11 +539,11 @@
   min-height: 60px;
   width: 100%;
 }
-.claude-cockpit-root .agent-input:focus {
+.agentic-os-root .agent-input:focus {
   outline: none;
   border-color: var(--accent);
 }
-.claude-cockpit-root .agent-send {
+.agentic-os-root .agent-send {
   background: var(--accent);
   color: #0a0a0a;
   border: none;
@@ -557,18 +557,18 @@
   align-self: flex-end;
   text-transform: uppercase;
 }
-.claude-cockpit-root .agent-send:hover { background: var(--accent-2); }
+.agentic-os-root .agent-send:hover { background: var(--accent-2); }
 
 /* ---------- Detail Modal ---------- */
-.claude-cockpit-root .stat-card.clickable {
+.agentic-os-root .stat-card.clickable {
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
-.claude-cockpit-root .stat-card.clickable:hover {
+.agentic-os-root .stat-card.clickable:hover {
   transform: translateY(-1px);
   border-color: #3a3a3a;
   box-shadow: 0 6px 24px -8px var(--glow, rgba(255,107,26,.18));
 }
-.claude-cockpit-root .detail-overlay {
+.agentic-os-root .detail-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.78);
@@ -582,7 +582,7 @@
   animation: detail-fade .18s ease;
 }
 @keyframes detail-fade { from { opacity: 0; } to { opacity: 1; } }
-.claude-cockpit-root .detail-pane {
+.agentic-os-root .detail-pane {
   background: #0a0a0a;
   border: 1px solid var(--border-2);
   border-radius: 6px;
@@ -596,7 +596,7 @@
   animation: detail-slide .22s ease;
 }
 @keyframes detail-slide { from { transform: translateY(8px); opacity: .8; } to { transform: translateY(0); opacity: 1; } }
-.claude-cockpit-root .media-card {
+.agentic-os-root .media-card {
   display: flex;
   flex-direction: column;
   background: #0c0c0c;
@@ -605,12 +605,12 @@
   overflow: hidden;
   transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-.claude-cockpit-root .media-card:hover {
+.agentic-os-root .media-card:hover {
   transform: translateY(-2px);
   border-color: var(--accent);
   box-shadow: 0 8px 28px -10px rgba(255,107,26,.25);
 }
-.claude-cockpit-root .audience-portal {
+.agentic-os-root .audience-portal {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -624,7 +624,7 @@
   position: relative;
   overflow: hidden;
 }
-.claude-cockpit-root .audience-portal::before {
+.agentic-os-root .audience-portal::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -633,16 +633,16 @@
   opacity: 0;
   transition: opacity .15s ease;
 }
-.claude-cockpit-root .audience-portal:hover {
+.agentic-os-root .audience-portal:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
   background: #100a07;
 }
-.claude-cockpit-root .audience-portal:hover::before { opacity: 1; }
-.claude-cockpit-root .audience-portal.ig:hover { box-shadow: 0 8px 28px -10px rgba(225,48,108,.25); }
-.claude-cockpit-root .audience-portal.tt:hover { box-shadow: 0 8px 28px -10px rgba(37,244,238,.25); }
+.agentic-os-root .audience-portal:hover::before { opacity: 1; }
+.agentic-os-root .audience-portal.ig:hover { box-shadow: 0 8px 28px -10px rgba(225,48,108,.25); }
+.agentic-os-root .audience-portal.tt:hover { box-shadow: 0 8px 28px -10px rgba(37,244,238,.25); }
 
-.claude-cockpit-root .detail-header {
+.agentic-os-root .detail-header {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -656,7 +656,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
-.claude-cockpit-root .back-btn {
+.agentic-os-root .back-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -672,14 +672,14 @@
   cursor: pointer;
   transition: background .12s ease, border-color .12s ease;
 }
-.claude-cockpit-root .back-btn:hover {
+.agentic-os-root .back-btn:hover {
   background: #221610;
   border-color: var(--accent);
   color: var(--accent);
 }
 
 /* ---------- Single-Video Focus Modal ---------- */
-.claude-cockpit-root .focus-overlay {
+.agentic-os-root .focus-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.86);
@@ -692,7 +692,7 @@
   padding: 24px;
   animation: detail-fade .15s ease;
 }
-.claude-cockpit-root .focus-pane {
+.agentic-os-root .focus-pane {
   background: #0a0a0a;
   border: 1px solid var(--border-2);
   border-radius: 6px;
@@ -705,7 +705,7 @@
   box-shadow: 0 24px 80px -20px rgba(0,0,0,.85);
   animation: detail-slide .2s ease;
 }
-.claude-cockpit-root .focus-header {
+.agentic-os-root .focus-header {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -718,13 +718,13 @@
   background: rgba(12, 12, 12, .96);
   backdrop-filter: blur(8px);
 }
-.claude-cockpit-root .focus-top {
+.agentic-os-root .focus-top {
   display: grid;
   grid-template-columns: 180px 1fr;
   gap: 22px;
   padding: 22px 22px 4px;
 }
-.claude-cockpit-root .focus-thumb-small {
+.agentic-os-root .focus-thumb-small {
   width: 180px;
   aspect-ratio: 9 / 16;
   background: #050505;
@@ -732,37 +732,37 @@
   border-radius: 4px;
   overflow: hidden;
 }
-.claude-cockpit-root .focus-stats {
+.agentic-os-root .focus-stats {
   min-width: 0;
 }
-.claude-cockpit-root .focus-stats .stat-grid {
+.agentic-os-root .focus-stats .stat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   height: 100%;
   align-content: start;
 }
-.claude-cockpit-root .focus-analyses {
+.agentic-os-root .focus-analyses {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 18px 22px 4px;
 }
-.claude-cockpit-root .focus-analyses:has(> :only-child) {
+.agentic-os-root .focus-analyses:has(> :only-child) {
   grid-template-columns: 1fr;
 }
-.claude-cockpit-root .analysis-box {
+.agentic-os-root .analysis-box {
   background: #0c0c0c;
   border: 1px solid var(--border-2);
   border-radius: 4px;
   padding: 14px 16px;
 }
-.claude-cockpit-root .focus-caption {
+.agentic-os-root .focus-caption {
   padding: 18px 22px 26px;
   border-top: 1px solid var(--border-2);
   margin-top: 14px;
 }
-.claude-cockpit-root .focus-caption .caption-text {
+.agentic-os-root .focus-caption .caption-text {
   color: #d8d8d8;
   font-size: 13.5px;
   line-height: 1.7;
@@ -771,7 +771,7 @@
 }
 
 /* ---------- Horizontal Media Card ---------- */
-.claude-cockpit-root .media-card-h {
+.agentic-os-root .media-card-h {
   display: grid;
   grid-template-columns: 70px 1fr;
   gap: 0;
@@ -787,30 +787,30 @@
   transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
   align-items: stretch;
 }
-.claude-cockpit-root .media-card-h:hover {
+.agentic-os-root .media-card-h:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
   box-shadow: 0 8px 24px -10px rgba(255,107,26,.22);
 }
-.claude-cockpit-root .media-card-h .thumb-side {
+.agentic-os-root .media-card-h .thumb-side {
   position: relative;
   background: #050505;
   aspect-ratio: 9 / 16;
   overflow: hidden;
 }
-.claude-cockpit-root .media-card-h .content-side {
+.agentic-os-root .media-card-h .content-side {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 10px 12px;
   min-width: 0;
 }
-.claude-cockpit-root .media-card-h .row-top {
+.agentic-os-root .media-card-h .row-top {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.claude-cockpit-root .day-badge {
+.agentic-os-root .day-badge {
   display: inline-block;
   padding: 3px 8px;
   background: #1a120c;
@@ -822,22 +822,22 @@
   font-size: 10px;
   letter-spacing: .16em;
 }
-.claude-cockpit-root .day-badge.muted {
+.agentic-os-root .day-badge.muted {
   background: #141414;
   border-color: #262626;
   color: var(--muted);
 }
-.claude-cockpit-root .day-badge.big {
+.agentic-os-root .day-badge.big {
   font-size: 12px;
   padding: 4px 10px;
   letter-spacing: .2em;
 }
-.claude-cockpit-root .media-card-h .row-stats {
+.agentic-os-root .media-card-h .row-stats {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
-.claude-cockpit-root .stat-pill {
+.agentic-os-root .stat-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -848,19 +848,19 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
 }
-.claude-cockpit-root .stat-pill .lbl {
+.agentic-os-root .stat-pill .lbl {
   color: var(--dim);
   font-size: 8.5px;
   letter-spacing: .12em;
 }
-.claude-cockpit-root .stat-pill .val {
+.agentic-os-root .stat-pill .val {
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
-.claude-cockpit-root .stat-pill .val.accent {
+.agentic-os-root .stat-pill .val.accent {
   color: var(--accent);
 }
-.claude-cockpit-root .media-card-h .row-counts {
+.agentic-os-root .media-card-h .row-counts {
   display: flex;
   gap: 10px;
   font-family: 'JetBrains Mono', monospace;
@@ -868,19 +868,19 @@
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
-.claude-cockpit-root .media-card-h .row-counts .dim {
+.agentic-os-root .media-card-h .row-counts .dim {
   color: var(--dim);
   margin-right: 1px;
 }
 
 /* ---------- Audience-View ---------- */
-.claude-cockpit-root .audience-section {
+.agentic-os-root .audience-section {
   background: #0c0c0c;
   border: 1px solid var(--border-2);
   border-radius: 4px;
   padding: 14px 16px;
 }
-.claude-cockpit-root .audience-kpi {
+.agentic-os-root .audience-kpi {
   background: #0c0c0c;
   border: 1px solid var(--border-2);
   border-radius: 4px;
@@ -889,7 +889,7 @@
 }
 
 /* ---------- Research / Compact List ---------- */
-.claude-cockpit-root .repo-list {
+.agentic-os-root .repo-list {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-2);
@@ -897,7 +897,7 @@
   background: #0a0a0a;
   overflow: hidden;
 }
-.claude-cockpit-root .section-divider {
+.agentic-os-root .section-divider {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -906,8 +906,8 @@
   border-bottom: 1px solid #1d1410;
   border-top: 1px solid #1d1410;
 }
-.claude-cockpit-root .section-divider:first-child { border-top: none; }
-.claude-cockpit-root .repo-row {
+.agentic-os-root .section-divider:first-child { border-top: none; }
+.agentic-os-root .repo-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -918,26 +918,26 @@
   transition: background .12s ease, padding-left .12s ease;
   min-height: 28px;
 }
-.claude-cockpit-root .repo-row:last-child { border-bottom: none; }
-.claude-cockpit-root .repo-row:hover {
+.agentic-os-root .repo-row:last-child { border-bottom: none; }
+.agentic-os-root .repo-row:hover {
   background: #120c08;
   padding-left: 16px;
 }
 
 /* ---------- Agents View (Sidebar + Chat) ---------- */
-.claude-cockpit-root .agents-view {
+.agentic-os-root .agents-view {
   display: grid;
   grid-template-columns: 240px 1fr;
   height: calc(100vh - 130px);
   gap: 0;
   border-top: 1px solid var(--border-2);
 }
-.claude-cockpit-root .agent-list {
+.agentic-os-root .agent-list {
   background: #0a0a0a;
   border-right: 1px solid var(--border-2);
   overflow-y: auto;
 }
-.claude-cockpit-root .agent-row {
+.agentic-os-root .agent-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -951,26 +951,26 @@
   transition: background .12s ease, border-left-color .12s ease;
   border-left: 2px solid transparent;
 }
-.claude-cockpit-root .agent-row:hover {
+.agentic-os-root .agent-row:hover {
   background: #100a07;
 }
-.claude-cockpit-root .agent-row.active {
+.agentic-os-root .agent-row.active {
   background: #120c08;
   border-left-color: var(--accent);
 }
-.claude-cockpit-root .agent-row .dot {
+.agentic-os-root .agent-row .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.claude-cockpit-root .agent-chat-pane {
+.agentic-os-root .agent-chat-pane {
   display: flex;
   flex-direction: column;
   min-width: 0;
   background: #050505;
 }
-.claude-cockpit-root .chat-header {
+.agentic-os-root .chat-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -978,7 +978,7 @@
   border-bottom: 1px solid var(--border-2);
   background: #0c0c0c;
 }
-.claude-cockpit-root .chat-scroll {
+.agentic-os-root .chat-scroll {
   flex: 1;
   overflow-y: auto;
   padding: 16px 18px;
@@ -986,7 +986,7 @@
   flex-direction: column;
   gap: 12px;
 }
-.claude-cockpit-root .chat-bubble {
+.agentic-os-root .chat-bubble {
   display: flex;
   flex-direction: column;
   padding: 10px 14px;
@@ -994,29 +994,29 @@
   max-width: 78%;
   border: 1px solid var(--border-2);
 }
-.claude-cockpit-root .chat-bubble.user {
+.agentic-os-root .chat-bubble.user {
   align-self: flex-end;
   background: #120c08;
   border-color: #2a1d12;
 }
-.claude-cockpit-root .chat-bubble.assistant {
+.agentic-os-root .chat-bubble.assistant {
   align-self: flex-start;
   background: #0c0c0c;
 }
-.claude-cockpit-root .chat-bubble.system {
+.agentic-os-root .chat-bubble.system {
   align-self: center;
   background: #1a0a0a;
   border-color: #3a1212;
   max-width: 90%;
 }
-.claude-cockpit-root .bubble-meta {
+.agentic-os-root .bubble-meta {
   display: flex;
   align-items: center;
   margin-bottom: 6px;
   color: var(--muted);
 }
-.claude-cockpit-root .chat-bubble.user .bubble-meta { color: var(--accent); }
-.claude-cockpit-root .bubble-text {
+.agentic-os-root .chat-bubble.user .bubble-meta { color: var(--accent); }
+.agentic-os-root .bubble-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
   line-height: 1.55;
@@ -1024,7 +1024,7 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-.claude-cockpit-root .chat-input-bar {
+.agentic-os-root .chat-input-bar {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1032,7 +1032,7 @@
   border-top: 1px solid var(--border-2);
   background: #0a0a0a;
 }
-.claude-cockpit-root .chat-input {
+.agentic-os-root .chat-input {
   width: 100%;
   background: #0c0c0c;
   border: 1px solid var(--border-2);
@@ -1047,27 +1047,27 @@
   outline: none;
   transition: border-color .12s ease;
 }
-.claude-cockpit-root .chat-input:focus { border-color: var(--accent); }
-.claude-cockpit-root .chat-input:disabled { opacity: .6; }
-.claude-cockpit-root .chat-input-actions {
+.agentic-os-root .chat-input:focus { border-color: var(--accent); }
+.agentic-os-root .chat-input:disabled { opacity: .6; }
+.agentic-os-root .chat-input-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 }
 
 /* ---------- Dashboard scroll + Chat-Drawer Layout ---------- */
-.claude-cockpit-root .pane {
+.agentic-os-root .pane {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 }
-.claude-cockpit-root .dashboard-scroll {
+.agentic-os-root .dashboard-scroll {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
 }
-.claude-cockpit-root .chat-drawer {
+.agentic-os-root .chat-drawer {
   display: flex;
   flex-direction: column;
   background: #050505;
@@ -1077,7 +1077,7 @@
   overflow: hidden;
   min-height: 320px;  /* below this, xterm visible area becomes too small to see content */
 }
-.claude-cockpit-root .chat-drawer-handle {
+.agentic-os-root .chat-drawer-handle {
   height: 6px;
   cursor: ns-resize;
   background: #0a0a0a;
@@ -1087,22 +1087,22 @@
   border-bottom: 1px solid #1a1a1a;
   flex-shrink: 0;
 }
-.claude-cockpit-root .chat-drawer-handle:hover {
+.agentic-os-root .chat-drawer-handle:hover {
   background: #1a120c;
 }
-.claude-cockpit-root .chat-drawer-handle-bar {
+.agentic-os-root .chat-drawer-handle-bar {
   width: 40px;
   height: 2px;
   background: #333;
   border-radius: 1px;
   transition: background .12s ease;
 }
-.claude-cockpit-root .chat-drawer-handle:hover .chat-drawer-handle-bar {
+.agentic-os-root .chat-drawer-handle:hover .chat-drawer-handle-bar {
   background: var(--accent);
 }
 
 /* Tabs */
-.claude-cockpit-root .chat-drawer-tabs {
+.agentic-os-root .chat-drawer-tabs {
   display: flex;
   align-items: stretch;
   gap: 2px;
@@ -1113,7 +1113,7 @@
   overflow-x: auto;
   scrollbar-width: thin;
 }
-.claude-cockpit-root .chat-tab {
+.agentic-os-root .chat-tab {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1129,11 +1129,11 @@
   white-space: nowrap;
   max-width: 220px;
 }
-.claude-cockpit-root .chat-tab:hover {
+.agentic-os-root .chat-tab:hover {
   background: #120c08;
   color: var(--text);
 }
-.claude-cockpit-root .chat-tab.active {
+.agentic-os-root .chat-tab.active {
   background: #050505;
   color: var(--accent);
   border-color: var(--accent);
@@ -1141,18 +1141,18 @@
   margin-bottom: -1px;
   z-index: 1;
 }
-.claude-cockpit-root .chat-tab-close {
+.agentic-os-root .chat-tab-close {
   font-size: 14px;
   color: var(--dim);
   padding: 0 4px;
   border-radius: 2px;
   transition: background .12s ease, color .12s ease;
 }
-.claude-cockpit-root .chat-tab-close:hover {
+.agentic-os-root .chat-tab-close:hover {
   background: #2a1d12;
   color: var(--accent);
 }
-.claude-cockpit-root .chat-tab-plus {
+.agentic-os-root .chat-tab-plus {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1167,7 +1167,7 @@
   font-weight: 600;
   transition: background .12s ease, color .12s ease, border-color .12s ease;
 }
-.claude-cockpit-root .chat-tab-minimize {
+.agentic-os-root .chat-tab-minimize {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1181,12 +1181,12 @@
   font-size: 14px;
   transition: background .12s ease, color .12s ease, border-color .12s ease;
 }
-.claude-cockpit-root .chat-tab-minimize:hover {
+.agentic-os-root .chat-tab-minimize:hover {
   background: #1a1410;
   color: var(--accent);
   border-color: var(--accent);
 }
-.claude-cockpit-root .chat-drawer-reopen {
+.agentic-os-root .chat-drawer-reopen {
   position: fixed;
   right: 18px;
   bottom: 18px;
@@ -1208,36 +1208,36 @@
   box-shadow: 0 6px 24px -6px rgba(255, 107, 26, .5);
   transition: background .12s ease, transform .12s ease;
 }
-.claude-cockpit-root .chat-drawer-reopen:hover {
+.agentic-os-root .chat-drawer-reopen:hover {
   background: #ff8a3d;
   transform: translateY(-1px);
 }
-.claude-cockpit-root .chat-drawer-reopen-count {
+.agentic-os-root .chat-drawer-reopen-count {
   background: rgba(0, 0, 0, .25);
   padding: 2px 7px;
   border-radius: 10px;
   font-size: 10px;
   letter-spacing: .08em;
 }
-.claude-cockpit-root .chat-tab-plus:hover {
+.agentic-os-root .chat-tab-plus:hover {
   background: #120c08;
   color: var(--accent);
   border-color: var(--accent);
 }
-.claude-cockpit-root .chat-tab-plus:disabled {
+.agentic-os-root .chat-tab-plus:disabled {
   opacity: .4;
   cursor: not-allowed;
 }
 
 /* Pane: chat bubbles + input row (ChatGPT-style) */
-.claude-cockpit-root .chat-pane {
+.agentic-os-root .chat-pane {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
   background: #0a0a0a;
 }
-.claude-cockpit-root .chat-bubbles-scroll {
+.agentic-os-root .chat-bubbles-scroll {
   flex: 1;
   overflow-y: auto;
   padding: 16px 18px 8px;
@@ -1248,7 +1248,7 @@
   /* instant scroll — smooth causes visible lag during streaming */
   scroll-behavior: auto;
 }
-.claude-cockpit-root .chat-bubbles-scroll .chat-bubble {
+.agentic-os-root .chat-bubbles-scroll .chat-bubble {
   max-width: 78%;
   padding: 10px 14px;
   border-radius: 10px;
@@ -1263,14 +1263,14 @@
 }
 /* ChatGPT-Style: user bubble pillow rust right, assistant FLAT no background left.
    Tool-call cards will render inline within assistant area later (phase 3). */
-.claude-cockpit-root .chat-bubbles-scroll .chat-bubble.user {
+.agentic-os-root .chat-bubbles-scroll .chat-bubble.user {
   align-self: flex-end;
   background: var(--accent);
   color: #1a0d05;
   font-weight: 500;
   border-bottom-right-radius: 2px;
 }
-.claude-cockpit-root .chat-bubbles-scroll .chat-bubble.assistant {
+.agentic-os-root .chat-bubbles-scroll .chat-bubble.assistant {
   align-self: flex-start;
   background: transparent;
   color: #e8e8e8;
@@ -1278,14 +1278,14 @@
   padding: 4px 0;
   max-width: 92%;
 }
-.claude-cockpit-root .chat-bubbles-scroll .chat-bubble.system {
+.agentic-os-root .chat-bubbles-scroll .chat-bubble.system {
   align-self: center;
   background: #2a1010;
   color: #ff9b9b;
   border: 1px solid #4a1818;
   max-width: 92%;
 }
-.claude-cockpit-root .chat-bubbles-scroll .chat-bubble .bubble-text {
+.agentic-os-root .chat-bubbles-scroll .chat-bubble .bubble-text {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
@@ -1293,7 +1293,7 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-.claude-cockpit-root .chat-bubble.thinking {
+.agentic-os-root .chat-bubble.thinking {
   display: inline-flex;
   align-items: center;
   padding: 4px 0;
@@ -1301,12 +1301,12 @@
   border: none;
   align-self: flex-start;
 }
-.claude-cockpit-root .thinking-dots {
+.agentic-os-root .thinking-dots {
   display: inline-flex;
   gap: 4px;
   align-items: center;
 }
-.claude-cockpit-root .thinking-dots span {
+.agentic-os-root .thinking-dots span {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -1314,14 +1314,14 @@
   opacity: .4;
   animation: thinking-pulse 1.2s ease-in-out infinite;
 }
-.claude-cockpit-root .thinking-dots span:nth-child(2) { animation-delay: .2s; }
-.claude-cockpit-root .thinking-dots span:nth-child(3) { animation-delay: .4s; }
+.agentic-os-root .thinking-dots span:nth-child(2) { animation-delay: .2s; }
+.agentic-os-root .thinking-dots span:nth-child(3) { animation-delay: .4s; }
 @keyframes thinking-pulse {
   0%, 100% { opacity: .25; transform: scale(.85); }
   50% { opacity: 1; transform: scale(1.1); }
 }
 
-.claude-cockpit-root .chat-empty {
+.agentic-os-root .chat-empty {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1330,12 +1330,12 @@
   color: var(--dim);
   gap: 6px;
 }
-.claude-cockpit-root .chat-empty-icon {
+.agentic-os-root .chat-empty-icon {
   font-size: 32px;
   opacity: .5;
   margin-bottom: 4px;
 }
-.claude-cockpit-root .chat-empty-title {
+.agentic-os-root .chat-empty-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   color: var(--text);
@@ -1343,12 +1343,12 @@
   text-transform: uppercase;
   font-weight: 600;
 }
-.claude-cockpit-root .chat-empty-sub {
+.agentic-os-root .chat-empty-sub {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
   font-size: 12.5px;
   color: var(--muted);
 }
-.claude-cockpit-root .chat-empty-hints {
+.agentic-os-root .chat-empty-hints {
   margin-top: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
@@ -1357,14 +1357,14 @@
   text-align: center;
   max-width: 460px;
 }
-.claude-cockpit-root .chat-empty-hints .mono {
+.agentic-os-root .chat-empty-hints .mono {
   color: var(--accent);
   background: #1a1410;
   padding: 1px 5px;
   border-radius: 3px;
 }
 
-.claude-cockpit-root .chat-input-row {
+.agentic-os-root .chat-input-row {
   display: flex;
   gap: 8px;
   padding: 10px 14px 12px;
@@ -1376,7 +1376,7 @@
   z-index: 2;
   position: relative;
 }
-.claude-cockpit-root .chat-input-tmux {
+.agentic-os-root .chat-input-tmux {
   flex: 1;
   background: #141414;
   border: 1px solid #232323;
@@ -1392,14 +1392,14 @@
   max-height: 200px;
   min-height: 38px;
 }
-.claude-cockpit-root .chat-input-tmux:focus {
+.agentic-os-root .chat-input-tmux:focus {
   border-color: var(--accent);
   background: #1a1410;
 }
-.claude-cockpit-root .chat-input-tmux::placeholder {
+.agentic-os-root .chat-input-tmux::placeholder {
   color: var(--dim);
 }
-.claude-cockpit-root .chat-send-btn {
+.agentic-os-root .chat-send-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1413,17 +1413,17 @@
   transition: background .12s ease, transform .12s ease, opacity .12s ease;
   flex-shrink: 0;
 }
-.claude-cockpit-root .chat-send-btn:hover:not(:disabled) {
+.agentic-os-root .chat-send-btn:hover:not(:disabled) {
   background: #ff8a3d;
   transform: scale(1.05);
 }
-.claude-cockpit-root .chat-send-btn:disabled {
+.agentic-os-root .chat-send-btn:disabled {
   background: #2a2a2a;
   color: var(--dim);
   cursor: not-allowed;
 }
 
-.claude-cockpit-root .chat-aux-btn {
+.agentic-os-root .chat-aux-btn {
   background: #141414;
   border: 1px solid #232323;
   border-radius: 8px;
@@ -1437,17 +1437,17 @@
   flex-shrink: 0;
   transition: background .12s ease, color .12s ease, border-color .12s ease;
 }
-.claude-cockpit-root .chat-aux-btn:hover:not(:disabled) {
+.agentic-os-root .chat-aux-btn:hover:not(:disabled) {
   background: #2a1d12;
   color: var(--accent);
   border-color: var(--accent);
 }
-.claude-cockpit-root .chat-aux-btn:disabled {
+.agentic-os-root .chat-aux-btn:disabled {
   opacity: .4;
   cursor: not-allowed;
 }
 
-.claude-cockpit-root .chat-stop-btn {
+.agentic-os-root .chat-stop-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1463,7 +1463,7 @@
   transition: background .12s ease, transform .12s ease;
   animation: pulse-stop 1.4s ease-in-out infinite;
 }
-.claude-cockpit-root .chat-stop-btn:hover {
+.agentic-os-root .chat-stop-btn:hover {
   background: #c45050;
   transform: scale(1.05);
 }
@@ -1473,7 +1473,7 @@
 }
 
 /* ---------- Command-Picker ---------- */
-.claude-cockpit-root .command-picker {
+.agentic-os-root .command-picker {
   position: absolute;
   bottom: 100%;
   left: 14px;
@@ -1488,7 +1488,7 @@
   z-index: 100;
   animation: detail-fade .15s ease;
 }
-.claude-cockpit-root .command-picker-header {
+.agentic-os-root .command-picker-header {
   padding: 8px 12px;
   border-bottom: 1px solid #131313;
   background: #0c0c0c;
@@ -1496,14 +1496,14 @@
   top: 0;
   z-index: 1;
 }
-.claude-cockpit-root .command-picker-empty {
+.agentic-os-root .command-picker-empty {
   padding: 14px;
   color: var(--muted);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
   font-size: 12px;
   text-align: center;
 }
-.claude-cockpit-root .command-picker-sendraw {
+.agentic-os-root .command-picker-sendraw {
   background: var(--accent);
   color: #1a0d05;
   border: none;
@@ -1516,11 +1516,11 @@
   cursor: pointer;
   transition: background .12s ease, transform .12s ease;
 }
-.claude-cockpit-root .command-picker-sendraw:hover {
+.agentic-os-root .command-picker-sendraw:hover {
   background: #ff8a3d;
   transform: translateY(-1px);
 }
-.claude-cockpit-root .command-picker-row {
+.agentic-os-root .command-picker-row {
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -1529,16 +1529,16 @@
   border-bottom: 1px solid #131313;
   transition: background .1s ease;
 }
-.claude-cockpit-root .command-picker-row:last-child {
+.agentic-os-root .command-picker-row:last-child {
   border-bottom: none;
 }
-.claude-cockpit-root .command-picker-row.active {
+.agentic-os-root .command-picker-row.active {
   background: #120c08;
 }
-.claude-cockpit-root .command-picker-row:hover {
+.agentic-os-root .command-picker-row:hover {
   background: #120c08;
 }
-.claude-cockpit-root .command-picker-row .cmd-name {
+.agentic-os-root .command-picker-row .cmd-name {
   color: var(--accent);
   font-size: 12px;
   font-weight: 600;
@@ -1547,7 +1547,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.claude-cockpit-root .command-picker-row .cmd-desc {
+.agentic-os-root .command-picker-row .cmd-desc {
   color: var(--muted);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
   font-size: 11.5px;
@@ -1556,7 +1556,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.claude-cockpit-root .command-picker-row .cmd-source {
+.agentic-os-root .command-picker-row .cmd-source {
   color: var(--dim);
   font-size: 9px;
   letter-spacing: .12em;
@@ -1564,35 +1564,35 @@
 }
 
 /* ---------- Markdown rendering in chat bubbles ---------- */
-.claude-cockpit-root .md-content {
+.agentic-os-root .md-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.claude-cockpit-root .md-content > *:first-child { margin-top: 0; }
-.claude-cockpit-root .md-content > *:last-child { margin-bottom: 0; }
-.claude-cockpit-root .md-para {
+.agentic-os-root .md-content > *:first-child { margin-top: 0; }
+.agentic-os-root .md-content > *:last-child { margin-bottom: 0; }
+.agentic-os-root .md-para {
   margin: 0;
   line-height: 1.55;
 }
-.claude-cockpit-root .md-h {
+.agentic-os-root .md-h {
   margin: 6px 0 4px;
   font-weight: 700;
   line-height: 1.3;
 }
-.claude-cockpit-root .md-h1 { font-size: 1.25em; }
-.claude-cockpit-root .md-h2 { font-size: 1.15em; }
-.claude-cockpit-root .md-h3 { font-size: 1.08em; }
-.claude-cockpit-root .md-h4 { font-size: 1em; }
-.claude-cockpit-root .md-list {
+.agentic-os-root .md-h1 { font-size: 1.25em; }
+.agentic-os-root .md-h2 { font-size: 1.15em; }
+.agentic-os-root .md-h3 { font-size: 1.08em; }
+.agentic-os-root .md-h4 { font-size: 1em; }
+.agentic-os-root .md-list {
   margin: 4px 0;
   padding-left: 22px;
   line-height: 1.55;
 }
-.claude-cockpit-root .md-list li {
+.agentic-os-root .md-list li {
   margin: 2px 0;
 }
-.claude-cockpit-root .md-quote {
+.agentic-os-root .md-quote {
   margin: 4px 0;
   padding: 6px 12px;
   border-left: 3px solid var(--accent);
@@ -1600,7 +1600,7 @@
   font-style: italic;
   color: var(--muted);
 }
-.claude-cockpit-root .md-content code {
+.agentic-os-root .md-content code {
   background: rgba(255, 255, 255, 0.08);
   padding: 1px 6px;
   border-radius: 3px;
@@ -1608,29 +1608,29 @@
   font-size: 0.9em;
   color: #ffb98a;
 }
-.claude-cockpit-root .md-content a {
+.agentic-os-root .md-content a {
   color: var(--accent);
   text-decoration: underline;
   text-decoration-color: rgba(255, 107, 26, 0.4);
 }
-.claude-cockpit-root .md-content a:hover {
+.agentic-os-root .md-content a:hover {
   text-decoration-color: var(--accent);
 }
-.claude-cockpit-root .md-content strong {
+.agentic-os-root .md-content strong {
   font-weight: 700;
   color: #f5f5f5;
 }
-.claude-cockpit-root .md-content em {
+.agentic-os-root .md-content em {
   font-style: italic;
 }
-.claude-cockpit-root .md-codeblock {
+.agentic-os-root .md-codeblock {
   background: #050505;
   border: 1px solid #1a1a1a;
   border-radius: 6px;
   margin: 4px 0;
   overflow: hidden;
 }
-.claude-cockpit-root .md-codeblock-header {
+.agentic-os-root .md-codeblock-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1638,14 +1638,14 @@
   background: #0c0c0c;
   border-bottom: 1px solid #1a1a1a;
 }
-.claude-cockpit-root .md-codeblock-lang {
+.agentic-os-root .md-codeblock-lang {
   font-family: 'JetBrains Mono', monospace;
   font-size: 9.5px;
   color: var(--dim);
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.claude-cockpit-root .md-copy-btn {
+.agentic-os-root .md-copy-btn {
   background: transparent;
   border: none;
   color: var(--muted);
@@ -1657,17 +1657,17 @@
   border-radius: 2px;
   transition: background .12s ease, color .12s ease;
 }
-.claude-cockpit-root .md-copy-btn:hover {
+.agentic-os-root .md-copy-btn:hover {
   background: #1a1410;
   color: var(--accent);
 }
-.claude-cockpit-root .md-codeblock pre {
+.agentic-os-root .md-codeblock pre {
   margin: 0;
   padding: 10px 12px;
   overflow-x: auto;
   background: transparent;
 }
-.claude-cockpit-root .md-codeblock code {
+.agentic-os-root .md-codeblock code {
   background: transparent;
   padding: 0;
   color: #d4d4d4;
@@ -1675,20 +1675,20 @@
   line-height: 1.5;
 }
 /* User-bubbles don't render md, but if they did, they'd need dark code on orange bg */
-.claude-cockpit-root .chat-bubble.user code {
+.agentic-os-root .chat-bubble.user code {
   background: rgba(0, 0, 0, 0.2);
   color: #2a1410;
 }
 
 /* ---------- Plugin Marketplace Modal ---------- */
-.claude-cockpit-root .plugin-marketplace {
+.agentic-os-root .plugin-marketplace {
   min-width: 640px;
   max-width: 760px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
 }
-.claude-cockpit-root .plugin-tab {
+.agentic-os-root .plugin-tab {
   background: transparent;
   border: 1px solid #232323;
   border-radius: 4px 4px 0 0;
@@ -1701,16 +1701,16 @@
   cursor: pointer;
   transition: background .12s ease, color .12s ease, border-color .12s ease;
 }
-.claude-cockpit-root .plugin-tab:hover {
+.agentic-os-root .plugin-tab:hover {
   background: #120c08;
   color: var(--text);
 }
-.claude-cockpit-root .plugin-tab.active {
+.agentic-os-root .plugin-tab.active {
   background: #160e08;
   color: var(--accent);
   border-color: var(--accent);
 }
-.claude-cockpit-root .plugin-search {
+.agentic-os-root .plugin-search {
   width: 100%;
   background: #0c0c0c;
   border: 1px solid #232323;
@@ -1721,46 +1721,46 @@
   font-size: 12px;
   outline: none;
 }
-.claude-cockpit-root .plugin-search:focus {
+.agentic-os-root .plugin-search:focus {
   border-color: var(--accent);
 }
-.claude-cockpit-root .plugin-list {
+.agentic-os-root .plugin-list {
   overflow-y: auto;
   flex: 1;
   min-height: 0;
 }
-.claude-cockpit-root .plugin-empty {
+.agentic-os-root .plugin-empty {
   padding: 30px 14px;
   text-align: center;
   color: var(--dim);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   font-size: 12px;
 }
-.claude-cockpit-root .plugin-row {
+.agentic-os-root .plugin-row {
   padding: 12px 14px;
   border-bottom: 1px solid #131313;
 }
-.claude-cockpit-root .plugin-row:last-child { border-bottom: none; }
-.claude-cockpit-root .plugin-row-header {
+.agentic-os-root .plugin-row:last-child { border-bottom: none; }
+.agentic-os-root .plugin-row-header {
   display: flex;
   align-items: baseline;
   gap: 10px;
   margin-bottom: 4px;
   flex-wrap: wrap;
 }
-.claude-cockpit-root .plugin-row-name {
+.agentic-os-root .plugin-row-name {
   color: #f5f5f5;
   font-size: 12.5px;
   font-weight: 600;
   flex: 1;
   min-width: 0;
 }
-.claude-cockpit-root .plugin-row-version {
+.agentic-os-root .plugin-row-version {
   font-size: 10px;
   color: var(--accent);
   letter-spacing: .04em;
 }
-.claude-cockpit-root .plugin-row-source {
+.agentic-os-root .plugin-row-source {
   font-size: 9px;
   color: var(--dim);
   letter-spacing: .14em;
@@ -1769,30 +1769,30 @@
   padding: 2px 6px;
   border-radius: 3px;
 }
-.claude-cockpit-root .plugin-row-desc {
+.agentic-os-root .plugin-row-desc {
   font-size: 11.5px;
   color: var(--muted);
   line-height: 1.45;
   margin-bottom: 6px;
 }
-.claude-cockpit-root .plugin-row-stats {
+.agentic-os-root .plugin-row-stats {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-.claude-cockpit-root .plugin-stat {
+.agentic-os-root .plugin-stat {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: var(--accent);
   letter-spacing: .04em;
 }
-.claude-cockpit-root .plugin-row-cmd {
+.agentic-os-root .plugin-row-cmd {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 8px;
 }
-.claude-cockpit-root .plugin-row-cmd code {
+.agentic-os-root .plugin-row-cmd code {
   flex: 1;
   background: #1a1a1a;
   border: 1px solid #232323;
@@ -1803,7 +1803,7 @@
   color: #ffb98a;
   overflow-x: auto;
 }
-.claude-cockpit-root .plugin-install-btn {
+.agentic-os-root .plugin-install-btn {
   background: var(--accent);
   color: #1a0d05;
   border: none;
@@ -1818,65 +1818,65 @@
   transition: background .12s ease;
   flex-shrink: 0;
 }
-.claude-cockpit-root .plugin-install-btn:hover {
+.agentic-os-root .plugin-install-btn:hover {
   background: #ff8a3d;
 }
 
 /* ---------- Generic Select Modal (model / effort / permissions) ---------- */
-.claude-cockpit-root .select-modal {
+.agentic-os-root .select-modal {
   min-width: 460px;
   max-width: 580px;
 }
-.claude-cockpit-root .select-modal-header {
+.agentic-os-root .select-modal-header {
   display: flex;
   align-items: baseline;
   padding: 12px 14px;
   border-bottom: 1px solid var(--border-2);
 }
-.claude-cockpit-root .select-modal-footer {
+.agentic-os-root .select-modal-footer {
   padding: 10px 14px;
   border-top: 1px solid var(--border-2);
   text-align: center;
 }
-.claude-cockpit-root .select-option-label {
+.agentic-os-root .select-option-label {
   font-size: 13px;
   color: #f5f5f5;
   font-weight: 600;
 }
-.claude-cockpit-root .select-option-desc {
+.agentic-os-root .select-option-desc {
   font-size: 10.5px;
   color: var(--muted);
   margin-top: 3px;
   line-height: 1.4;
 }
-.claude-cockpit-root .select-option-hint {
+.agentic-os-root .select-option-hint {
   font-size: 9.5px;
   color: var(--dim);
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.claude-cockpit-root .picker-row.active {
+.agentic-os-root .picker-row.active {
   background: #160e08;
   border-left: 2px solid var(--accent);
 }
-.claude-cockpit-root .picker-row.active .select-option-label {
+.agentic-os-root .picker-row.active .select-option-label {
   color: var(--accent);
 }
-.claude-cockpit-root .picker-row.hovered {
+.agentic-os-root .picker-row.hovered {
   background: #1a120c;
 }
-.claude-cockpit-root .picker-row.hovered.active {
+.agentic-os-root .picker-row.hovered.active {
   background: #2a1810;
 }
-.claude-cockpit-root .select-modal-list {
+.agentic-os-root .select-modal-list {
   max-height: 50vh;
   overflow-y: auto;
   scrollbar-width: thin;
 }
-.claude-cockpit-root .select-modal-list::-webkit-scrollbar {
+.agentic-os-root .select-modal-list::-webkit-scrollbar {
   width: 6px;
 }
-.claude-cockpit-root .select-modal-list::-webkit-scrollbar-thumb {
+.agentic-os-root .select-modal-list::-webkit-scrollbar-thumb {
   background: #2a2a2a;
   border-radius: 3px;
 }
@@ -1886,7 +1886,7 @@
    Damit rendert claude TUI seinen Footer (Eingabebox + 2 Status-Zeilen)
    in den unsichtbaren Bereich. Wir zeigen StatusBar und Custom-Input
    stattdessen über/unter dem Wrap. */
-.claude-cockpit-root .xterm-pane-wrap {
+.agentic-os-root .xterm-pane-wrap {
   flex: 1 1 0;
   min-height: 0;
   background: #0a0a0a;
@@ -1894,7 +1894,7 @@
   overflow: hidden;
   order: 1;
 }
-.claude-cockpit-root .xterm-pane {
+.agentic-os-root .xterm-pane {
   position: absolute;
   top: 0;
   left: 0;
@@ -1903,20 +1903,20 @@
   padding: 8px 10px 8px;
   box-sizing: border-box;
 }
-.claude-cockpit-root .xterm-pane .xterm {
+.agentic-os-root .xterm-pane .xterm {
   height: 100%;
 }
-.claude-cockpit-root .xterm-pane .xterm-viewport {
+.agentic-os-root .xterm-pane .xterm-viewport {
   background: #0a0a0a !important;
   scrollbar-width: none;
 }
-.claude-cockpit-root .xterm-pane .xterm-viewport::-webkit-scrollbar {
+.agentic-os-root .xterm-pane .xterm-viewport::-webkit-scrollbar {
   display: none;
 }
 /* No bottom fade — xterm shows claude TUI fully now */
 
 /* ---------- Tool-Call Cards (inline in assistant messages) ---------- */
-.claude-cockpit-root .tool-card {
+.agentic-os-root .tool-card {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1934,25 +1934,25 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.claude-cockpit-root .tool-card.tool-card-bash    { border-left-color: #4ade80; }
-.claude-cockpit-root .tool-card.tool-card-write   { border-left-color: #fbbf24; }
-.claude-cockpit-root .tool-card.tool-card-web     { border-left-color: #60a5fa; }
-.claude-cockpit-root .tool-card.tool-card-skill   { border-left-color: #c084fc; }
-.claude-cockpit-root .tool-card.tool-card-mcp     { border-left-color: #f472b6; }
-.claude-cockpit-root .tool-card.tool-card-todo    { border-left-color: #34d399; }
-.claude-cockpit-root .tool-card.tool-card-fs      { border-left-color: var(--accent); }
-.claude-cockpit-root .tool-card.tool-card-read    { border-left-color: var(--accent); }
-.claude-cockpit-root .tool-card.tool-card-ask     { border-left-color: #fbbf24; }
-.claude-cockpit-root .tool-card-icon {
+.agentic-os-root .tool-card.tool-card-bash    { border-left-color: #4ade80; }
+.agentic-os-root .tool-card.tool-card-write   { border-left-color: #fbbf24; }
+.agentic-os-root .tool-card.tool-card-web     { border-left-color: #60a5fa; }
+.agentic-os-root .tool-card.tool-card-skill   { border-left-color: #c084fc; }
+.agentic-os-root .tool-card.tool-card-mcp     { border-left-color: #f472b6; }
+.agentic-os-root .tool-card.tool-card-todo    { border-left-color: #34d399; }
+.agentic-os-root .tool-card.tool-card-fs      { border-left-color: var(--accent); }
+.agentic-os-root .tool-card.tool-card-read    { border-left-color: var(--accent); }
+.agentic-os-root .tool-card.tool-card-ask     { border-left-color: #fbbf24; }
+.agentic-os-root .tool-card-icon {
   flex-shrink: 0;
   font-size: 12px;
 }
-.claude-cockpit-root .tool-card-name {
+.agentic-os-root .tool-card-name {
   color: var(--accent);
   font-weight: 600;
   flex-shrink: 0;
 }
-.claude-cockpit-root .tool-card-summary {
+.agentic-os-root .tool-card-summary {
   color: var(--muted);
   font-weight: 400;
   overflow: hidden;
@@ -1960,7 +1960,7 @@
   min-width: 0;
   flex: 1;
 }
-.claude-cockpit-root .tool-card-expand {
+.agentic-os-root .tool-card-expand {
   background: transparent;
   border: 1px solid #2a2a2a;
   border-radius: 3px;
@@ -1974,20 +1974,20 @@
   transition: background .12s ease, border-color .12s ease, color .12s ease;
   flex-shrink: 0;
 }
-.claude-cockpit-root .tool-card-expand:hover {
+.agentic-os-root .tool-card-expand:hover {
   background: #1a1410;
   border-color: var(--accent);
   color: var(--accent);
 }
-.claude-cockpit-root .block-text {
+.agentic-os-root .block-text {
   display: block;
   margin: 4px 0;
 }
-.claude-cockpit-root .block-text:first-child { margin-top: 0; }
-.claude-cockpit-root .block-text:last-child  { margin-bottom: 0; }
+.agentic-os-root .block-text:first-child { margin-top: 0; }
+.agentic-os-root .block-text:last-child  { margin-bottom: 0; }
 
 /* ---------- Status Bar (per-tab) ---------- */
-.claude-cockpit-root .status-bar {
+.agentic-os-root .status-bar {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2002,8 +2002,8 @@
   z-index: 2;
   position: relative;
 }
-.claude-cockpit-root .status-bar::-webkit-scrollbar { display: none; }
-.claude-cockpit-root .status-pill {
+.agentic-os-root .status-bar::-webkit-scrollbar { display: none; }
+.agentic-os-root .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2019,34 +2019,34 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-.claude-cockpit-root .status-pill:hover {
+.agentic-os-root .status-pill:hover {
   background: #1a1a1a;
   border-color: #2a2a2a;
 }
-.claude-cockpit-root .status-pill .status-pill-label {
+.agentic-os-root .status-pill .status-pill-label {
   color: var(--dim);
   font-size: 8.5px;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
-.claude-cockpit-root .status-pill .status-pill-value {
+.agentic-os-root .status-pill .status-pill-value {
   color: var(--text);
   font-weight: 600;
   letter-spacing: .04em;
 }
-.claude-cockpit-root .status-pill.mode .status-pill-value {
+.agentic-os-root .status-pill.mode .status-pill-value {
   color: var(--mode-color, var(--text));
 }
-.claude-cockpit-root .status-pill.effort .status-pill-value {
+.agentic-os-root .status-pill.effort .status-pill-value {
   color: var(--accent);
 }
-.claude-cockpit-root .status-pill.context {
+.agentic-os-root .status-pill.context {
   cursor: pointer;
 }
-.claude-cockpit-root .status-pill.context .status-pill-value {
+.agentic-os-root .status-pill.context .status-pill-value {
   color: var(--ctx-color, var(--text));
 }
-.claude-cockpit-root .status-ctx-bar {
+.agentic-os-root .status-ctx-bar {
   display: inline-block;
   width: 36px;
   height: 6px;
@@ -2055,35 +2055,35 @@
   overflow: hidden;
   margin-left: 2px;
 }
-.claude-cockpit-root .status-ctx-fill {
+.agentic-os-root .status-ctx-fill {
   display: block;
   height: 100%;
   background: var(--ctx-color, var(--accent));
   transition: width .25s ease;
 }
-.claude-cockpit-root .status-pill.workspace {
+.agentic-os-root .status-pill.workspace {
   cursor: default;
   background: transparent;
   border-color: transparent;
 }
-.claude-cockpit-root .status-pill.workspace:hover {
+.agentic-os-root .status-pill.workspace:hover {
   background: transparent;
   border-color: transparent;
 }
-.claude-cockpit-root .status-pill.action {
+.agentic-os-root .status-pill.action {
   border-color: rgba(255, 107, 26, 0.3);
 }
-.claude-cockpit-root .status-pill.action:hover {
+.agentic-os-root .status-pill.action:hover {
   background: #1a1410;
   border-color: var(--accent);
 }
-.claude-cockpit-root .status-pill.action .status-pill-value {
+.agentic-os-root .status-pill.action .status-pill-value {
   color: var(--accent);
   font-size: 12px;
 }
 
 /* ---------- Modal-Stuck Banner ---------- */
-.claude-cockpit-root .modal-stuck-banner {
+.agentic-os-root .modal-stuck-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2099,20 +2099,20 @@
   0%, 100% { background: linear-gradient(90deg, #2a1410, #1a0a08); }
   50% { background: linear-gradient(90deg, #3a1c14, #2a120c); }
 }
-.claude-cockpit-root .modal-stuck-info {
+.agentic-os-root .modal-stuck-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.claude-cockpit-root .modal-stuck-label {
+.agentic-os-root .modal-stuck-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: .18em;
   color: var(--accent);
 }
-.claude-cockpit-root .modal-stuck-hint {
+.agentic-os-root .modal-stuck-hint {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: var(--muted);
@@ -2120,12 +2120,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.claude-cockpit-root .modal-stuck-actions {
+.agentic-os-root .modal-stuck-actions {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
 }
-.claude-cockpit-root .modal-stuck-actions button {
+.agentic-os-root .modal-stuck-actions button {
   background: #1a1010;
   border: 1px solid #3a1d12;
   color: var(--text);
@@ -2137,23 +2137,23 @@
   transition: background .12s ease, border-color .12s ease;
   min-width: 30px;
 }
-.claude-cockpit-root .modal-stuck-actions button:hover {
+.agentic-os-root .modal-stuck-actions button:hover {
   background: #3a1410;
   border-color: var(--accent);
   color: var(--accent);
 }
-.claude-cockpit-root .modal-stuck-actions .modal-esc {
+.agentic-os-root .modal-stuck-actions .modal-esc {
   background: #4a1818;
   border-color: #6a2020;
   color: #ff9b9b;
 }
-.claude-cockpit-root .modal-stuck-actions .modal-esc:hover {
+.agentic-os-root .modal-stuck-actions .modal-esc:hover {
   background: #6a2020;
   color: #fff;
 }
 
 /* Agent picker overlay */
-.claude-cockpit-root .agent-picker-overlay {
+.agentic-os-root .agent-picker-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.78);
@@ -2163,7 +2163,7 @@
   align-items: center;
   justify-content: center;
 }
-.claude-cockpit-root .agent-picker {
+.agentic-os-root .agent-picker {
   background: #0a0a0a;
   border: 1px solid var(--border-2);
   border-radius: 6px;
@@ -2172,7 +2172,7 @@
   overflow: hidden;
   animation: detail-slide .18s ease;
 }
-.claude-cockpit-root .picker-row {
+.agentic-os-root .picker-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2185,14 +2185,14 @@
   color: inherit;
   transition: background .12s ease, padding-left .12s ease;
 }
-.claude-cockpit-root .picker-row:last-child {
+.agentic-os-root .picker-row:last-child {
   border-bottom: none;
 }
-.claude-cockpit-root .picker-row:hover {
+.agentic-os-root .picker-row:hover {
   background: #120c08;
   padding-left: 18px;
 }
-.claude-cockpit-root .picker-row .dot {
+.agentic-os-root .picker-row .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;

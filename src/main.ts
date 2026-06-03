@@ -18,13 +18,13 @@ export default class ClaudeCockpitPlugin extends Plugin {
 			(leaf: WorkspaceLeaf) => new TerminalView(leaf),
 		);
 
-		this.addRibbonIcon("square-terminal", "Open Claude Cockpit", () => {
+		this.addRibbonIcon("square-terminal", "Open Agentic OS", () => {
 			void this.activateView();
 		});
 
 		this.addCommand({
-			id: "open-claude-cockpit",
-			name: "Open Claude Cockpit",
+			id: "open-agentic-os",
+			name: "Open Agentic OS",
 			callback: () => { void this.activateView(); },
 		});
 
@@ -37,7 +37,7 @@ export default class ClaudeCockpitPlugin extends Plugin {
 		// macOS: Cmd-Shortcuts → zsh-Ctrl-Equivalente im Terminal.
 		registerTerminalKeyMapper(this, this.app);
 
-		new Notice("Claude Cockpit geladen.");
+		new Notice("Agentic OS geladen.");
 	}
 
 	async onunload(): Promise<void> {

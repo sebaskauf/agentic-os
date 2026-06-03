@@ -195,7 +195,7 @@ export function detectThinking(rawCapture: string): { isThinking: boolean; think
 /**
  * Parses status info from the bottom 2-3 footer lines.
  * Example footer (claude v2.1.150):
- *   ⬆ /gsd:update │ Opus 4.7 (1M context) │ claude-cockpit ░░░░░░░░░░ 5%
+ *   ⬆ /gsd:update │ Opus 4.7 (1M context) │ agentic-os ░░░░░░░░░░ 5%
  *   ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents
  */
 export function parseStatusInfo(raw: string): StatusInfo {

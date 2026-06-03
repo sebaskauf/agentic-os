@@ -80,7 +80,7 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 			lastPasteAt = now;
 			// CRLF/CR → LF normalisieren (Windows-Clipboard), bracketed-paste macht ptyPaste selbst.
 			const norm = text.replace(/\r\n?/g, "\n");
-			console.log(`[claude-cockpit] paste ${norm.length} chars from ${source} → ${sessionName}`);
+			console.log(`[agentic-os] paste ${norm.length} chars from ${source} → ${sessionName}`);
 			ptyPaste(sessionName, norm);
 		};
 
@@ -204,7 +204,7 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 						try {
 							const p = webUtilsCached.getPathForFile(f);
 							if (typeof p === "string" && p.length > 0) { paths.push(p); continue; }
-						} catch (e) { console.warn("[claude-cockpit] webUtils.getPathForFile failed for", f.name, e); }
+						} catch (e) { console.warn("[agentic-os] webUtils.getPathForFile failed for", f.name, e); }
 					}
 				}
 			}
@@ -251,10 +251,10 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 			if (!isInsideOurPane(ev.target)) return;
 			ev.preventDefault(); ev.stopPropagation();
 			const dt = ev.dataTransfer;
-			if (dt === null) { console.warn("[claude-cockpit] drop with null dataTransfer"); return; }
+			if (dt === null) { console.warn("[agentic-os] drop with null dataTransfer"); return; }
 			const paths = extractPaths(dt);
 			if (paths.length === 0) {
-				console.warn("[claude-cockpit] drop received but no paths extracted. dt.types =", Array.from(dt.types), "files =", dt.files?.length);
+				console.warn("[agentic-os] drop received but no paths extracted. dt.types =", Array.from(dt.types), "files =", dt.files?.length);
 				return;
 			}
 			// Quote when path has space OR backslash (Windows). claude reads quoted path literally.
@@ -262,7 +262,7 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 				const needsQuote = p.includes(" ") || p.includes("\\");
 				return needsQuote ? `@"${p}"` : `@${p}`;
 			}).join(" ") + " ";
-			console.log(`[claude-cockpit] dropped ${paths.length} file(s) → ${sessionName}:`, paths);
+			console.log(`[agentic-os] dropped ${paths.length} file(s) → ${sessionName}:`, paths);
 			sendPaste(mentions, "drag-drop");
 		};
 		document.addEventListener("dragenter", onDocDragEnter, true);
@@ -306,7 +306,7 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 
 		const session = getPtySession(sessionName);
 		if (session === null) {
-			console.error("[claude-cockpit] no pty session for", sessionName);
+			console.error("[agentic-os] no pty session for", sessionName);
 			return;
 		}
 		sessionRef.current = session;

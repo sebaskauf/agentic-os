@@ -6,7 +6,7 @@ import { loadCommands } from "./loadCommands";
 import { loadFiles } from "./loadFiles";
 import { type ChatTab, loadTabs, saveTabs } from "./loadChatTabs";
 
-export const VIEW_TYPE_TERMINAL = "claude-cockpit-terminal";
+export const VIEW_TYPE_TERMINAL = "agentic-os-terminal";
 
 interface TerminalViewState {
 	tab?: ChatTab;
@@ -55,8 +55,8 @@ export class TerminalView extends ItemView {
 	}
 
 	async onOpen(): Promise<void> {
-		this.contentEl.addClass("claude-cockpit-root");
-		this.contentEl.addClass("claude-cockpit-terminal-leaf");
+		this.contentEl.addClass("agentic-os-root");
+		this.contentEl.addClass("agentic-os-terminal-leaf");
 		if (this.tab !== null) this.renderView();
 	}
 

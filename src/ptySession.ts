@@ -137,7 +137,7 @@ export function spawnSession(opts: SpawnOpts): { ok: boolean; error?: string } {
 		return { ok: true };
 	} catch (e: unknown) {
 		const msg = e instanceof Error ? e.message : String(e);
-		console.error("[claude-cockpit] spawnSession threw:", msg);
+		console.error("[agentic-os] spawnSession threw:", msg);
 		return { ok: false, error: msg };
 	}
 }
@@ -208,7 +208,7 @@ const KEY_BYTES: Record<string, string> = {
 /** Ersetzt ChatDrawer.sendKeystroke + tmux send-keys (named). Single-char keys (y/n) gehen direkt. */
 export function sendKey(name: string, key: string): void {
 	const bytes = KEY_BYTES[key] ?? (key.length === 1 ? key : undefined);
-	if (bytes === undefined) { console.warn("[claude-cockpit] unknown key:", key); return; }
+	if (bytes === undefined) { console.warn("[agentic-os] unknown key:", key); return; }
 	writeRaw(name, bytes);
 }
 
