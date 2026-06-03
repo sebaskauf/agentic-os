@@ -1,0 +1,30 @@
+{
+	"name": "claude-cockpit",
+	"version": "0.1.0",
+	"description": "Claude Code in einem eingebetteten Terminal für Obsidian",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"setup-native": "bash scripts/setup-native.sh"
+	},
+	"keywords": ["obsidian", "claude", "claude-code", "terminal"],
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^16.11.6",
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.1",
+		"esbuild": "0.25.5",
+		"tslib": "2.4.0",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"@xterm/addon-fit": "^0.11.0",
+		"@xterm/xterm": "^6.0.0",
+		"node-pty": "1.1.0",
+		"obsidian": "latest",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	}
+}
