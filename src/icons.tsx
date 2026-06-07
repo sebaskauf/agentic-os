@@ -31,6 +31,13 @@ export const Icons = {
 			<path d="M3 10 H21 M8 3 V7 M16 3 V7" />
 		</svg>
 	),
+	sunrise: (p: IconProps) => (
+		<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" {...p}>
+			<path d="M3 19 H21" />
+			<path d="M7 19 a5 5 0 0 1 10 0" />
+			<path d="M12 3 V6 M4.5 8.5 L6 10 M19.5 8.5 L18 10" />
+		</svg>
+	),
 	check: (p: IconProps) => (
 		<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" {...p}>
 			<path d="M5 12 L10 17 L19 7" />

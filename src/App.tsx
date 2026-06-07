@@ -10,6 +10,8 @@ import { loadSkills, type SkillDef } from "./loadSkills";
 import { fetchTokenStats, type TokenStats } from "./ccusageLoader";
 import { loadResearch, loadResearchCache, type ResearchData, type GHRepo } from "./researchLoader";
 import { loadTasks, toggleTask, type TaskItem } from "./tasksLoader";
+import { loadBriefings, pullBriefings, type BriefingData, type Briefing } from "./briefingLoader";
+import { renderMarkdown } from "./renderMarkdown";
 import { appendActivity, loadActivity, type ActivityEntry } from "./activityLog";
 import { ChatDrawer } from "./ChatDrawer";
 
@@ -440,6 +442,93 @@ function StatusBar(): JSX.Element {
 	);
 }
 
+/* ---------- Morning Briefing (ECHT via Briefings/ git-Klon) ---------- */
+// Kontext-Prompt fuer "Hiermit weiterarbeiten" — geht an die aktive Terminal-Session.
+const BRIEFING_CONTINUE_CMD =
+	"Lies @Briefings/, mein E-Mail-Briefing. Hilf mir die Handlungsschritte abzuarbeiten: Antworten entwerfen, erst nach meinem OK senden. Womit fangen wir an?";
+
+function fmtBriefingDate(iso: string): string {
+	const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+	if (m === null) return iso;
+	const dt = new Date(Number(m[1] ?? "0"), Number(m[2] ?? "1") - 1, Number(m[3] ?? "1"));
+	if (isNaN(dt.getTime())) return iso;
+	try {
+		return new Intl.DateTimeFormat("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(dt);
+	} catch (_) { return iso; }
+}
+
+function BriefingWidget({ data }: { data: BriefingData }): JSX.Element {
+	const [expanded, setExpanded] = useState<boolean>(false);
+	const [selected, setSelected] = useState<string>("");
+
+	// Leerzustand: schlanke, ehrliche Zeile statt Fake-"fertig".
+	if (data.latest === null) {
+		return (
+			<div style={{ margin: "4px 18px 0" }}>
+				<div className="featured" style={{ padding: "9px 14px", display: "flex", alignItems: "center", gap: 10, opacity: 0.8 }}>
+					<span className="ctitle"><Icons.sunrise style={{ color: "var(--accent)" }} /> morning briefing</span>
+					<span className="mono" style={{ color: "var(--dim)", fontSize: 10.5, letterSpacing: ".04em" }}>
+						noch kein Briefing — der Cloud-Agent legt morgens eins in <span style={{ color: "var(--muted)" }}>Briefings/</span> ab
+					</span>
+				</div>
+			</div>
+		);
+	}
+
+	const all: Briefing[] = [data.latest, ...data.older];
+	const current = all.find((b) => b.date === selected) ?? data.latest;
+
+	// Eingeklappt: schlanke Leiste, klickbar zum Aufklappen.
+	if (!expanded) {
+		return (
+			<div style={{ margin: "4px 18px 0" }}>
+				<div className="featured" onClick={() => setExpanded(true)} title="Briefing aufklappen"
+					style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+					<span className="ctitle"><Icons.sunrise style={{ color: "var(--accent)" }} /> morning briefing</span>
+					<span style={{ color: "#f5f5f5", fontSize: 12.5, fontWeight: 500 }}>Dein Briefing ist fertig</span>
+					<span className="mono small-caps" style={{ color: "var(--dim)", fontSize: 10, letterSpacing: ".1em" }}>{data.latest.date}</span>
+					<span style={{ flex: 1 }} />
+					<span className="mono small-caps" style={{ color: "var(--accent)", fontSize: 10.5, letterSpacing: ".12em" }}>ansehen ▸</span>
+				</div>
+			</div>
+		);
+	}
+
+	// Aufgeklappt: Datum-Header, gerendertes Markdown, Dropdown fuer aeltere Tage, Buttons.
+	return (
+		<div style={{ margin: "4px 18px 0", position: "relative" }}>
+			<div className="featured" style={{ padding: "14px 18px 16px", position: "relative" }}>
+				<span className="bracket tl" /><span className="bracket tr" /><span className="bracket bl" /><span className="bracket br" />
+				<div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 10 }}>
+					<div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+						<span className="ctitle"><Icons.sunrise style={{ color: "var(--accent)" }} /> morning briefing</span>
+						<span className="mono" style={{ fontSize: 15, color: "#f5f5f5", fontWeight: 600, letterSpacing: ".01em" }}>{fmtBriefingDate(current.date)}</span>
+					</div>
+					<div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+						{all.length > 1 && (
+							<select className="mono" value={current.date} onChange={(e) => setSelected(e.target.value)} title="Aelteres Briefing waehlen"
+								style={{ background: "#0d0d0d", color: "var(--text)", border: "1px solid var(--border-2)", borderRadius: 4, fontSize: 10.5, padding: "4px 6px", letterSpacing: ".04em" }}>
+								{all.map((b, i) => (<option key={b.date} value={b.date}>{b.date}{i === 0 ? " · neuestes" : ""}</option>))}
+							</select>
+						)}
+						<button className="mono" onClick={() => setExpanded(false)}
+							style={{ padding: "4px 10px", background: "transparent", border: "1px solid var(--border-2)", borderRadius: 4, color: "var(--muted)", fontSize: 10.5, letterSpacing: ".1em", cursor: "pointer" }}>
+							▴ einklappen
+						</button>
+					</div>
+				</div>
+				<div style={{ maxHeight: 420, overflowY: "auto", paddingRight: 4 }}>
+					{renderMarkdown(current.content)}
+				</div>
+				<button className="mono" onClick={() => runCommand(BRIEFING_CONTINUE_CMD)} title="Briefing als Kontext an die aktive Terminal-Session schicken"
+					style={{ marginTop: 12, padding: "8px 14px", background: "var(--accent)", color: "#0a0a0a", border: "none", borderRadius: 4, fontSize: 11.5, fontWeight: 600, letterSpacing: ".06em", cursor: "pointer" }}>
+					▸ Hiermit weiterarbeiten
+				</button>
+			</div>
+		</div>
+	);
+}
+
 /* ---------- App Root ---------- */
 export function App(): JSX.Element {
 	const [tab, setTab] = useState<TabId>("OVERVIEW");
@@ -450,6 +539,7 @@ export function App(): JSX.Element {
 	const [commands, setCommands] = useState<SlashCommand[]>([]);
 	const [tasks, setTasks] = useState<TaskItem[]>([]);
 	const [activity, setActivity] = useState<ActivityEntry[]>([]);
+	const [briefings, setBriefings] = useState<BriefingData>(() => loadBriefings());
 
 	const refreshTokens = useCallback((): void => {
 		void fetchTokenStats(new Date().toISOString()).then(setTokens);
@@ -458,6 +548,7 @@ export function App(): JSX.Element {
 		const now = new Date();
 		void loadResearch(now.toISOString(), now.getTime(), force).then(setResearch);
 	}, []);
+	const reloadBriefings = useCallback((): void => { setBriefings(loadBriefings()); }, []);
 
 	useEffect(() => {
 		setSkills(loadSkills());
@@ -474,6 +565,14 @@ export function App(): JSX.Element {
 		return () => { window.clearInterval(tokenId); window.clearInterval(researchId); window.clearInterval(localId); };
 	}, [refreshTokens, refreshResearch]);
 
+	// Briefings: beim Oeffnen + alle 5 Min git pull im Briefings/-Klon, bei Neuem neu laden.
+	useEffect(() => {
+		const sync = (): void => { pullBriefings((changed) => { if (changed) reloadBriefings(); }); };
+		sync();
+		const id = window.setInterval(sync, 5 * 60_000);
+		return () => window.clearInterval(id);
+	}, [reloadBriefings]);
+
 	const onToggleTask = useCallback((line: number): void => {
 		toggleTask(line);
 		setTasks(loadTasks());
@@ -485,7 +584,9 @@ export function App(): JSX.Element {
 		setSkills(loadSkills());
 		setTasks(loadTasks());
 		setActivity(loadActivity());
-	}, [refreshTokens, refreshResearch]);
+		setBriefings(loadBriefings());
+		pullBriefings((changed) => { if (changed) reloadBriefings(); });
+	}, [refreshTokens, refreshResearch, reloadBriefings]);
 
 	const counts = { skills: skills.length, agents: agents.length, commands: commands.filter((c) => c.source !== "builtin").length };
 
@@ -495,7 +596,8 @@ export function App(): JSX.Element {
 			<div className="dashboard-scroll">
 				{tab === "OVERVIEW" && (
 					<>
-						<TokenBurn tokens={tokens} />
+						<BriefingWidget data={briefings} />
+							<TokenBurn tokens={tokens} />
 						<StatsRow counts={counts} tokens={tokens} />
 						<SkillGrid skills={skills} />
 						<div style={{ margin: "14px 18px 18px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
