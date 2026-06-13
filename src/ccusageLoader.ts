@@ -87,7 +87,7 @@ function mapBlock(b: RawBlock): TokenBlock {
  */
 export function fetchTokenStats(nowIso: string): Promise<TokenStats> {
 	return new Promise((resolve) => {
-		const npx = resolveBinary("npx") ?? (isWin ? "npx.cmd" : "npx");
+		const args = ["-y", "ccusage@latest", "blocks", "--active", "--json"];
 		let out = "";
 		let err = "";
 		let done = false;
@@ -99,10 +99,16 @@ export function fetchTokenStats(nowIso: string): Promise<TokenStats> {
 
 		let child;
 		try {
-			child = spawn(npx, ["-y", "ccusage@latest", "blocks", "--active", "--json"], {
-				env: spawnEnv(),
-				windowsHide: true,
-			});
+			if (isWin) {
+				// npx ist auf Windows ein .cmd-Shim. Modernes Node verweigert das Spawnen
+				// von .cmd/.bat ohne Shell (CVE-2024-27980-Haertung -> EINVAL). Daher ueber
+				// die Shell; PATH/PATHEXT (aus spawnEnv) loesen npx auf. Args sind statisch,
+				// kein User-Input -> keine Injection-Flaeche.
+				child = spawn("npx", args, { env: spawnEnv(), windowsHide: true, shell: true });
+			} else {
+				const npx = resolveBinary("npx") ?? "npx";
+				child = spawn(npx, args, { env: spawnEnv(), windowsHide: true });
+			}
 		} catch (e) {
 			finish({ fetched_at: nowIso, active: null, error: e instanceof Error ? e.message : String(e) });
 			return;

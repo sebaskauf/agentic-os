@@ -1,0 +1,13 @@
+{
+  "name": "agentic-os-windows-smoke",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Headless Electron-Renderer-Smoke-Test fuer node-pty. Beweist, dass der ConPTY-Worker-Patch im Renderer-Prozess greift (Worker-Verbot wie in Obsidian) und kein Close-Deadlock auftritt. Laeuft auf CI windows-latest und lokal auf mac/linux (dort nur Mechanik-Check).",
+  "main": "main.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "devDependencies": {
+    "electron": "39.8.3"
+  }
+}

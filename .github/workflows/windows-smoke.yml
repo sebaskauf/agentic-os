@@ -1,0 +1,50 @@
+name: windows-smoke
+
+# Beweist auf echtem Windows + echtem Electron-Renderer, dass der node-pty
+# ConPTY-Worker-Patch greift und kein Close-Deadlock auftritt. Laeuft bei jedem
+# Push auf den Windows-Branch/main und manuell. So koennen node-pty- oder
+# Electron-Updates Windows nicht mehr heimlich brechen.
+
+on:
+  push:
+    branches: [main, windows-support]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install plugin deps
+        run: npm ci
+
+      - name: Build native/ (inkl. win32 + ConPTY-Patch)
+        shell: bash
+        run: npm run setup-native
+
+      - name: Verify Windows-Patch im Build
+        shell: bash
+        run: |
+          set -e
+          test -f native/win32-x64/lib/index.js
+          test -f native/win32-x64/prebuilds/win32-x64/conpty.node
+          grep -q "AGENTIC-OS WINDOWS-PATCH" native/win32-x64/lib/windowsConoutConnection.js
+          if grep -q "new worker_threads" native/win32-x64/lib/windowsConoutConnection.js; then
+            echo "FEHLER: Worker-Aufruf noch im gepatchten File"; exit 1
+          fi
+          echo "Patch verifiziert."
+
+      - name: Install Electron-Smoke-Test deps
+        working-directory: test/windows-smoke
+        run: npm install
+
+      - name: Run headless Electron renderer smoke test
+        working-directory: test/windows-smoke
+        run: npx electron .
