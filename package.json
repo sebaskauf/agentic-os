@@ -1,6 +1,6 @@
 {
 	"name": "agentic-os",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Claude Code in einem eingebetteten Terminal für Obsidian",
 	"main": "main.js",
 	"type": "module",
@@ -9,7 +9,12 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"setup-native": "bash scripts/setup-native.sh"
 	},
-	"keywords": ["obsidian", "claude", "claude-code", "terminal"],
+	"keywords": [
+		"obsidian",
+		"claude",
+		"claude-code",
+		"terminal"
+	],
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
