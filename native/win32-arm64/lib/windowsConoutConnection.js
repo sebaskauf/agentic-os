@@ -12,96 +12,94 @@
  *    Isolate does not support creating Workers."
  * Damit crasht das Terminal beim ersten Spawn auf Windows.
  *
- * Dieser Patch ersetzt den Worker durch direktes Inline-Socket-Piping im
- * Renderer-Thread: der _outSocket verbindet sich direkt mit der echten
- * conout-Pipe statt mit der Worker-Relay-Pipe (getWorkerPipeName).
+ * Dieser Patch repliziert EXAKT, was der Worker tat -- nur inline im
+ * Renderer-Thread statt im Worker-Thread:
+ *   1. conout-Pipe (ConPTY-Output) sofort lesen/drainen,
+ *   2. einen Relay-Server auf der "-worker"-Pipe oeffnen,
+ *   3. die conout-Daten dorthin durchpipen.
+ * node-ptys _outSocket verbindet sich unveraendert mit der "-worker"-Pipe
+ * (connectSocket). Die Drain-Schicht MUSS erhalten bleiben, sonst blockiert
+ * ConPTY synchron, weil die Output-Pipe nie geleert wird (Deadlock/Hang).
+ * Der ClosePseudoConsole-Deadlock (microsoft/node-pty#375) wird durch den
+ * 1s-Drain vor dem Schliessen abgefedert.
  *
- * Der ClosePseudoConsole-Deadlock (microsoft/node-pty#375), gegen den der
- * Worker urspruenglich existierte, wird durch den FLUSH_DATA_INTERVAL-Drain
- * vor dem Schliessen nachgebildet: der Timer wird bei jedem neuen Datenevent
- * zurueckgesetzt, der Socket erst geschlossen wenn der Output wirklich steht.
- * Kein Byte-Verlust, kein Deadlock beim Schliessen waehrend aktivem Output.
- *
- * Bewaehrter Ansatz (gleicher Stack: lean-obsidian-terminal). Wird von
- * scripts/setup-native.sh nach dem lib-Copy ueber die win32-Ziele kopiert.
- * WICHTIG: node-pty-Version ist in package.json gepinnt. Bei Update diese
- * Datei gegen den neuen Originalcode (lib/windowsConoutConnection.js) pruefen.
+ * Bewaehrter Mechanismus aus dem Produktiv-Plugin lean-obsidian-terminal
+ * (sdkasper, patches/windowsConoutConnection.js), gleicher Stack.
+ * Wird von scripts/setup-native.sh ueber die win32-Ziele kopiert.
+ * WICHTIG: node-pty-Version ist gepinnt. Bei Update gegen den neuen
+ * Originalcode (lib/windowsConoutConnection.js) pruefen.
  * ============================================================================
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConoutConnection = void 0;
-var eventEmitter2_1 = require("./eventEmitter2");
-/**
- * Zeit (ms) ohne neue conout-Daten, nach der der Socket geschlossen wird.
- * Reset bei neuen Daten -> kein Byte-Verlust, kein Conpty-Deadlock.
- */
-var FLUSH_DATA_INTERVAL = 1000;
-var ConoutConnection = /** @class */ (function () {
+var net = require("net");
+var conout_1 = require("./shared/conout");
+
+var ConoutConnection = (function () {
     function ConoutConnection(_conoutPipeName, _useConptyDll) {
         var _this = this;
         this._conoutPipeName = _conoutPipeName;
         this._useConptyDll = _useConptyDll;
         this._isDisposed = false;
-        this._socket = null;
-        this._drainTimeout = undefined;
-        this._onReady = new eventEmitter2_1.EventEmitter2();
-        // PATCH: kein new Worker(). onReady muss ASYNCHRON feuern, weil der
-        // onReady-Listener (windowsPtyAgent) erst NACH diesem Constructor
-        // registriert wird. setTimeout(.,0) stellt sicher, dass er schon da ist.
-        setTimeout(function () {
-            if (!_this._isDisposed) {
-                _this._onReady.fire();
-            }
-        }, 0);
-    }
-    Object.defineProperty(ConoutConnection.prototype, "onReady", {
-        get: function () { return this._onReady.event; },
-        enumerable: false,
-        configurable: true
-    });
-    ConoutConnection.prototype.connectSocket = function (socket) {
-        var _this = this;
-        // PATCH: direkt an die echte conout-Pipe (kein Worker-Relay ueber
-        // getWorkerPipeName). node-pty liest danach unveraendert ueber diesen Socket.
-        this._socket = socket;
-        // Sobald disposed: Drain-Timer bei jedem neuen Datenevent zuruecksetzen,
-        // damit der letzte Output noch ankommt, bevor der Socket schliesst.
-        socket.on("data", function () {
-            if (_this._isDisposed && _this._drainTimeout) {
-                clearTimeout(_this._drainTimeout);
-                _this._drainTimeout = setTimeout(function () { return _this._destroySocket(); }, FLUSH_DATA_INTERVAL);
-            }
+        this._readyCallbacks = [];
+        this._isReady = false;
+        this._conoutSocket = null;
+        this._server = null;
+        this._drainTimeout = null;
+
+        // Inline-Variante dessen, was der Worker tat: conout-Pipe verbinden,
+        // Relay-Server oeffnen, Daten durchpipen.
+        this._conoutSocket = new net.Socket();
+        this._conoutSocket.setEncoding("utf8");
+        this._conoutSocket.connect(_conoutPipeName, function () {
+            _this._server = net.createServer(function (workerSocket) {
+                _this._conoutSocket.pipe(workerSocket);
+            });
+            _this._server.listen(conout_1.getWorkerPipeName(_conoutPipeName));
+            _this._isReady = true;
+            _this._readyCallbacks.forEach(function (cb) { cb(); });
+            _this._readyCallbacks = [];
         });
-        socket.connect(this._conoutPipeName);
+
+        this._conoutSocket.on("error", function () {
+            // Verbindungsfehler waehrend Cleanup ignorieren
+        });
+    }
+
+    ConoutConnection.prototype.onReady = function (listener) {
+        if (this._isReady) {
+            listener();
+        } else {
+            this._readyCallbacks.push(listener);
+        }
+        return { dispose: function () {} };
     };
+
+    ConoutConnection.prototype.connectSocket = function (socket) {
+        socket.connect(conout_1.getWorkerPipeName(this._conoutPipeName));
+    };
+
     ConoutConnection.prototype.dispose = function () {
+        var _this = this;
         if (!this._useConptyDll && this._isDisposed) {
             return;
         }
         this._isDisposed = true;
-        // Restliche Daten aus dem Socket lassen, dann schliessen.
-        this._drainDataAndClose();
-    };
-    ConoutConnection.prototype._drainDataAndClose = function () {
-        var _this = this;
         if (this._drainTimeout) {
             clearTimeout(this._drainTimeout);
         }
-        this._drainTimeout = setTimeout(function () { return _this._destroySocket(); }, FLUSH_DATA_INTERVAL);
-    };
-    ConoutConnection.prototype._destroySocket = function () {
-        // PATCH: kein worker.terminate() -- den direkten conout-Socket schliessen.
-        if (this._socket) {
+        // Restliche Daten noch durchlaufen lassen, dann Server + Socket schliessen.
+        this._drainTimeout = setTimeout(function () {
             try {
-                if (!this._socket.destroyed) {
-                    this._socket.destroy();
-                }
+                if (_this._server) _this._server.close();
+                if (_this._conoutSocket) _this._conoutSocket.destroy();
+            } catch (e) {
+                // Cleanup-Fehler ignorieren
             }
-            catch (e) { /* ignore */ }
-            this._socket = null;
-        }
+        }, 1000);
     };
+
     return ConoutConnection;
 }());
+
 exports.ConoutConnection = ConoutConnection;
-//# sourceMappingURL=windowsConoutConnection.js.map
