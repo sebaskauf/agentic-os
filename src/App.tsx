@@ -14,6 +14,7 @@ import { loadBriefings, pullBriefings, type BriefingData, type Briefing } from "
 import { renderMarkdown } from "./renderMarkdown";
 import { appendActivity, loadActivity, type ActivityEntry } from "./activityLog";
 import { ChatDrawer } from "./ChatDrawer";
+import { CutterView } from "./CutterView";
 
 /* ---------- Helpers ---------- */
 const fmtCompact = (n: number): string => {
@@ -73,9 +74,9 @@ function useTick(ms = 1000): void {
 }
 
 /* ---------- Header (mit Tabs) ---------- */
-type TabId = "OVERVIEW" | "RESEARCH";
+type TabId = "OVERVIEW" | "RESEARCH" | "CUTTER";
 function Header({ tab, setTab, onRefresh, fetchedAt }: { tab: TabId; setTab: (t: TabId) => void; onRefresh: () => void; fetchedAt: string }): JSX.Element {
-	const TABS: Array<[TabId, string]> = [["OVERVIEW", "ÜBERSICHT"], ["RESEARCH", "RESEARCH"]];
+	const TABS: Array<[TabId, string]> = [["OVERVIEW", "ÜBERSICHT"], ["RESEARCH", "RESEARCH"], ["CUTTER", "CUTTER"]];
 	return (
 		<div style={{ padding: "14px 18px 10px" }}>
 			<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -593,6 +594,9 @@ export function App(): JSX.Element {
 	return (
 		<div className="pane">
 			<Header tab={tab} setTab={setTab} onRefresh={onRefresh} fetchedAt={tokens?.fetched_at ?? ""} />
+			{tab === "CUTTER" ? (
+				<CutterView />
+			) : (
 			<div className="dashboard-scroll">
 				{tab === "OVERVIEW" && (
 					<>
@@ -608,6 +612,7 @@ export function App(): JSX.Element {
 				)}
 				{tab === "RESEARCH" && <ResearchFeed research={research} onRefresh={() => refreshResearch(true)} />}
 			</div>
+			)}
 			<ChatDrawer />
 			<StatusBar />
 		</div>
