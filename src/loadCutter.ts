@@ -1,8 +1,8 @@
 import { spawn, execSync } from "child_process";
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync, openSync } from "fs";
+import { appendFileSync, existsSync, readdirSync, readFileSync, statSync, writeFileSync, openSync } from "fs";
+import { get as httpGet } from "http";
 import { join } from "path";
 import { homedir, platform } from "os";
-import { requestUrl } from "obsidian";
 
 export const COCKPIT_PORT = 8766;
 export const COCKPIT_URL = `http://127.0.0.1:${COCKPIT_PORT}/`;
@@ -18,6 +18,58 @@ function venvPython(dir: string): string {
 // Konventionen aus dem claude-video-cutter-Repo (video-cut-uebergabe-Skill):
 const SEGMENTS_REL = "segments_v5_repaired.json";
 const QA_REL = "verify2/qa_stage_a.json";
+const QA_FALLBACK_REL = "qa_stage_a.json";
+
+/** QA-Datei: verify2-Konvention bevorzugt, Stage-A-Datei als Fallback
+ * (Repair kann 0 Kanten ändern → manche Workdirs haben kein verify2/). */
+function qaRelFor(workdir: string): string | null {
+	if (existsSync(join(workdir, QA_REL))) return QA_REL;
+	if (existsSync(join(workdir, QA_FALLBACK_REL))) return QA_FALLBACK_REL;
+	return null;
+}
+
+/**
+ * Debug-Log als Datei (<cutter>/cutter-plugin.log) — Obsidians DevTools-Konsole
+ * ist von außen nicht lesbar; ohne File-Log bleiben Status-Fehler unsichtbar.
+ * Gedrosselt auf max. 1 Zeile / 10s, wirft nie.
+ */
+let lastDebugLog = 0;
+function logDebug(msg: string): void {
+	try {
+		const now = Date.now();
+		if (now - lastDebugLog < 10_000) return;
+		lastDebugLog = now;
+		const d = cutterDir();
+		if (d === null) return;
+		appendFileSync(join(d, "cutter-plugin.log"), `${new Date().toISOString()} ${msg}\n`);
+	} catch (_) {
+		/* Logging darf nie stören */
+	}
+}
+
+/**
+ * Health-Check via NODE-http (nicht Obsidians requestUrl!). requestUrl läuft
+ * über Chromiums Netzwerk-Stack und kann 127.0.0.1 unerreichbar melden,
+ * obwohl der Server läuft — Node-http nimmt denselben Weg wie curl.
+ */
+function fetchState(timeoutMs = 4000): Promise<{ status: number; body: string }> {
+	return new Promise((resolve, reject) => {
+		const req = httpGet(
+			{ host: "127.0.0.1", port: COCKPIT_PORT, path: "/api/state", timeout: timeoutMs },
+			(res) => {
+				let data = "";
+				res.setEncoding("utf8");
+				res.on("data", (c: string) => {
+					data += c;
+					if (data.length > 8_000_000) req.destroy(new Error("body too large"));
+				});
+				res.on("end", () => resolve({ status: res.statusCode ?? 0, body: data }));
+			},
+		);
+		req.on("timeout", () => req.destroy(new Error("timeout")));
+		req.on("error", reject);
+	});
+}
 
 /**
  * Findet das claude-video-cutter-Repo des Users.
@@ -72,11 +124,20 @@ export interface CockpitManifest {
  */
 export async function cockpitStatus(): Promise<CockpitStatus> {
 	try {
-		const res = await requestUrl({ url: COCKPIT_URL + "api/state", throw: false });
-		if (res.status !== 200) return { running: false };
-		const body = res.json as { paths?: { workdir?: string } } | undefined;
-		return { running: true, workdir: body?.paths?.workdir };
-	} catch (_) {
+		const r = await fetchState();
+		if (r.status !== 200) {
+			logDebug(`cockpitStatus: HTTP ${r.status} von /api/state`);
+			return { running: false };
+		}
+		let workdir: string | undefined;
+		try {
+			workdir = (JSON.parse(r.body) as { paths?: { workdir?: string } }).paths?.workdir;
+		} catch (_) {
+			/* running zählt, workdir ist optional */
+		}
+		return { running: true, workdir };
+	} catch (e) {
+		logDebug(`cockpitStatus: ${String(e)}`);
 		return { running: false };
 	}
 }
@@ -92,7 +153,7 @@ export function listWorkdirs(dir: string): WorkdirEntry[] {
 				try {
 					const st = statSync(p);
 					if (!st.isDirectory()) return null;
-					const ready = existsSync(join(p, SEGMENTS_REL)) && existsSync(join(p, QA_REL));
+					const ready = existsSync(join(p, SEGMENTS_REL)) && qaRelFor(p) !== null;
 					const mf = readManifest(p);
 					return { name: n, path: p, ready, srcVideo: mf?.src_video, mtimeMs: st.mtimeMs };
 				} catch (_) {
@@ -131,9 +192,10 @@ export function startCockpit(dir: string, workdir: string, srcVideo: string): { 
 	if (!existsSync(srcVideo)) return { ok: false, error: "Quell-Video nicht gefunden: " + srcVideo };
 	try {
 		const log = openSync(join(workdir, "cockpit.log"), "a");
+		const qaRel = qaRelFor(workdir) ?? QA_REL;
 		const child = spawn(
 			venvPy,
-			[server, workdir, join(workdir, SEGMENTS_REL), join(workdir, QA_REL), String(COCKPIT_PORT), srcVideo],
+			[server, workdir, join(workdir, SEGMENTS_REL), join(workdir, qaRel), String(COCKPIT_PORT), srcVideo],
 			{ cwd: dir, detached: true, stdio: ["ignore", log, log] },
 		);
 		child.unref();
@@ -152,7 +214,10 @@ export function stopCockpit(): void {
 				{ encoding: "utf-8" },
 			);
 		} else {
-			execSync(`lsof -ti :${COCKPIT_PORT} | xargs kill`, { encoding: "utf-8" });
+			// NUR den Listener killen — ohne -sTCP:LISTEN trifft lsof auch die
+			// ESTABLISHED-Clients (Obsidians eigene iframe-Verbindung!) und der
+			// Server überlebt als Zombie, der Neustarts blockiert.
+			execSync(`lsof -ti :${COCKPIT_PORT} -sTCP:LISTEN | xargs kill`, { encoding: "utf-8" });
 		}
 	} catch (_) {
 		/* lief nichts auf dem Port */
