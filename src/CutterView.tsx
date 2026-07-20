@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import {
 	COCKPIT_URL,
-	IS_MAC,
+	IS_SUPPORTED,
 	cockpitStatus,
 	cutterDir,
 	listWorkdirs,
@@ -104,12 +104,12 @@ export function CutterView(): JSX.Element {
 						Setup: github.com/sebaskauf/claude-video-cutter klonen und die INSTALL.md von deinem Claude
 						Code ausführen lassen — für diesen Tab zusätzlich die INSTALL-AGENTIC-OS.md (sie hinterlegt
 						den Pfad in ~/.claude-video-cutter-path).
-						{!IS_MAC && (
+						{!IS_SUPPORTED && (
 							<>
 								<br />
 								<br />
-								Hinweis: Der CUTTER-Tab ist aktuell macOS-only — das Cockpit selbst läuft überall im
-								Browser (127.0.0.1:8766).
+								Hinweis: Der CUTTER-Tab läuft auf macOS und Windows — auf anderen Systemen nutzt du das
+								Cockpit im Browser (127.0.0.1:8766).
 							</>
 						)}
 					</div>

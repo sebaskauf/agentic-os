@@ -6,9 +6,15 @@ import { requestUrl } from "obsidian";
 
 export const COCKPIT_PORT = 8766;
 export const COCKPIT_URL = `http://127.0.0.1:${COCKPIT_PORT}/`;
-// Der Server-Spawn/Kill nutzt macOS-Prozess-Tools (lsof, zsh) — auf anderen
-// Plattformen zeigt der Tab einen Hinweis und verweist auf den Browser-Weg.
-export const IS_MAC = platform() === "darwin";
+// Unterstützt macOS und Windows; auf anderen Plattformen zeigt der Tab
+// einen Hinweis und verweist auf den Browser-Weg (Cockpit läuft überall).
+export const IS_WIN = platform() === "win32";
+export const IS_SUPPORTED = platform() === "darwin" || IS_WIN;
+
+/** Pfad zum venv-Python des Cutter-Repos (Windows: Scripts/ statt bin/). */
+function venvPython(dir: string): string {
+	return join(dir, IS_WIN ? ".venv312/Scripts/python.exe" : ".venv312/bin/python");
+}
 // Konventionen aus dem claude-video-cutter-Repo (video-cut-uebergabe-Skill):
 const SEGMENTS_REL = "segments_v5_repaired.json";
 const QA_REL = "verify2/qa_stage_a.json";
@@ -117,8 +123,8 @@ export function writeManifest(workdir: string, m: CockpitManifest): void {
 
 /** Startet den Server detached (überlebt Obsidian). stdout/err → workdir/cockpit.log. */
 export function startCockpit(dir: string, workdir: string, srcVideo: string): { ok: boolean; error?: string } {
-	if (!IS_MAC) return { ok: false, error: "CUTTER-Tab ist aktuell macOS-only — nutze das Cockpit im Browser" };
-	const venvPy = join(dir, ".venv312/bin/python");
+	if (!IS_SUPPORTED) return { ok: false, error: "CUTTER-Tab läuft auf macOS und Windows — nutze sonst das Cockpit im Browser" };
+	const venvPy = venvPython(dir);
 	const server = join(dir, "scripts/cockpit_server.py");
 	if (!existsSync(venvPy)) return { ok: false, error: "Python-venv fehlt (" + venvPy + ") — INSTALL.md ausführen" };
 	if (!existsSync(server)) return { ok: false, error: "Server-Script fehlt: " + server };
@@ -137,11 +143,17 @@ export function startCockpit(dir: string, workdir: string, srcVideo: string): { 
 	}
 }
 
-/** Killt den Prozess auf dem Cockpit-Port (macOS/lsof). */
+/** Killt den Prozess auf dem Cockpit-Port (macOS: lsof · Windows: PowerShell). */
 export function stopCockpit(): void {
-	if (!IS_MAC) return;
 	try {
-		execSync(`lsof -ti :${COCKPIT_PORT} | xargs kill`, { encoding: "utf-8" });
+		if (IS_WIN) {
+			execSync(
+				`powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort ${COCKPIT_PORT} -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }"`,
+				{ encoding: "utf-8" },
+			);
+		} else {
+			execSync(`lsof -ti :${COCKPIT_PORT} | xargs kill`, { encoding: "utf-8" });
+		}
 	} catch (_) {
 		/* lief nichts auf dem Port */
 	}

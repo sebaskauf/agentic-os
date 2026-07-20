@@ -1,7 +1,7 @@
 {
 	"id": "agentic-os",
 	"name": "Agentic OS",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"minAppVersion": "1.5.0",
 	"description": "Führt Claude Code in einem eingebetteten Terminal direkt in Obsidian aus (node-pty, plattformübergreifend). Multi-Tab, Pop-out, Skill-/Agent-Launcher für deine eigenen Commands und Agents.",
 	"author": "Sebastian Kauffmann",
