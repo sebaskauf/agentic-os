@@ -67,6 +67,34 @@ xattr -dr com.apple.quarantine "<dein-Vault>/.obsidian/plugins/agentic-os"
 
 Daten (offene Tabs etc.) liegen in `~/.agentic-os/`.
 
+### Terminal anpassen (Schriftgröße und Farben)
+
+Einstellungen → **Agentic OS**: Schriftgröße, Hintergrund, Text, Cursor und Markierung. Änderungen wirken
+sofort in allen offenen Terminals, jeder Punkt lässt sich einzeln oder komplett zurücksetzen.
+
+Gespeichert wird in `~/.agentic-os/terminal-settings.json`, also außerhalb des Plugin-Ordners. Deine
+Einstellungen bleiben deshalb bei jedem Update erhalten. In der Datei stehen nur deine eigenen Werte, alles
+andere kommt vom Standard. Ohne Datei sieht das Terminal genauso aus wie bisher.
+
+Die 16 Terminal-Farben kannst du direkt in der Datei setzen, als Hex-Wert, danach in den Einstellungen
+„Datei neu einlesen":
+
+```json
+{
+  "fontSize": 14,
+  "colors": {
+    "background": "#1e1e2e",
+    "foreground": "#cdd6f4",
+    "red": "#f38ba8",
+    "brightBlue": "#89b4fa"
+  }
+}
+```
+
+Erlaubte Farbnamen: `background`, `foreground`, `cursor`, `cursorAccent`, `selectionBackground`, `black`,
+`red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white` und die `bright…`-Varianten. Ungültige Werte
+werden ignoriert, eine kaputte Datei fällt auf den Standard zurück.
+
 ---
 
 ## Wie es funktioniert
@@ -83,6 +111,7 @@ Obsidian-Updates. Lädt aus `native/<platform>-<arch>/`.
 - [x] macOS (arm64 + x64)
 - [ ] Windows — node-pty/ConPTY läuft, braucht aber einen Renderer-Worker-Patch + Tests auf echter Hardware
 - [ ] Linux
+- [x] Terminal-Einstellungen (Schriftgröße, Farben), update-fest in `~/.agentic-os/`
 - [ ] Optionale Settings (eigene `--add-dir`-Pfade, Default-Workspace)
 
 ---

@@ -1889,7 +1889,7 @@
 .agentic-os-root .xterm-pane-wrap {
   flex: 1 1 0;
   min-height: 0;
-  background: #0a0a0a;
+  background: var(--agentic-os-term-bg, #0a0a0a);
   position: relative;
   overflow: hidden;
   order: 1;
@@ -1907,7 +1907,7 @@
   height: 100%;
 }
 .agentic-os-root .xterm-pane .xterm-viewport {
-  background: #0a0a0a !important;
+  background: var(--agentic-os-term-bg, #0a0a0a) !important;
   scrollbar-width: none;
 }
 .agentic-os-root .xterm-pane .xterm-viewport::-webkit-scrollbar {

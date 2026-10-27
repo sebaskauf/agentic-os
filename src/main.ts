@@ -4,6 +4,7 @@ import { TerminalView, VIEW_TYPE_TERMINAL } from "./terminalView";
 import { makeUUID, type ChatTab } from "./loadChatTabs";
 import { registerTerminalKeyMapper } from "./keyMapper";
 import { killAllSessions } from "./ptySession";
+import { AgenticOsSettingTab } from "./settingsTab";
 
 export default class ClaudeCockpitPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -36,6 +37,9 @@ export default class ClaudeCockpitPlugin extends Plugin {
 
 		// macOS: Cmd-Shortcuts → zsh-Ctrl-Equivalente im Terminal.
 		registerTerminalKeyMapper(this, this.app);
+
+		// Einstellungen: Schriftgröße + Farben des Terminals (~/.agentic-os/terminal-settings.json).
+		this.addSettingTab(new AgenticOsSettingTab(this.app, this));
 
 		new Notice("Agentic OS geladen.");
 	}

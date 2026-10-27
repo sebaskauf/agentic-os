@@ -3,8 +3,26 @@ import { useEffect, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { getPtySession, paste as ptyPaste, type PtyHandle } from "./ptySession";
+import {
+	DEFAULT_THEME,
+	getTerminalSettings,
+	onTerminalSettingsChange,
+	type ResolvedTerminalSettings,
+} from "./terminalSettings";
 
 const IS_MAC = process.platform === "darwin";
+
+/**
+ * Der Rahmen um das Terminal (styles.css) nutzt --agentic-os-term-bg mit dem
+ * Standard-Hintergrund als Fallback. Nur bei eigenem Hintergrund wird die
+ * Variable gesetzt, sonst bleibt alles exakt wie vorher.
+ */
+function applyBackgroundVar(el: HTMLElement | null, s: ResolvedTerminalSettings): void {
+	if (el === null) return;
+	const bg = s.theme.background;
+	if (bg !== undefined && bg !== DEFAULT_THEME.background) el.style.setProperty("--agentic-os-term-bg", bg);
+	else el.style.removeProperty("--agentic-os-term-bg");
+}
 
 interface XtermPaneProps {
 	sessionName: string;
@@ -17,6 +35,7 @@ interface XtermPaneProps {
  * kein pipe-pane-Logfile, kein fs-Polling — der Renderer zeigt exakt was claude rendert.
  */
 export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
+	const wrapRef = useRef<HTMLDivElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const termRef = useRef<Terminal | null>(null);
 	const fitRef = useRef<FitAddon | null>(null);
@@ -25,33 +44,14 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 	// Mount xterm once
 	useEffect(() => {
 		if (containerRef.current === null) return;
+		// Schriftgröße + Farben aus den Einstellungen (ohne eigene Werte = bisheriger Standard).
+		const initial = getTerminalSettings();
+		applyBackgroundVar(wrapRef.current, initial);
 		const term = new Terminal({
 			fontFamily: "JetBrainsMono, 'JetBrains Mono', ui-monospace, Menlo, monospace",
-			fontSize: 12.5,
+			fontSize: initial.fontSize,
 			lineHeight: 1.25,
-			theme: {
-				background: "#0a0a0a",
-				foreground: "#e5e5e5",
-				cursor: "#FF6B1A",
-				cursorAccent: "#0a0a0a",
-				selectionBackground: "#3a2515",
-				black: "#0a0a0a",
-				red: "#f87171",
-				green: "#4ade80",
-				yellow: "#fbbf24",
-				blue: "#60a5fa",
-				magenta: "#c084fc",
-				cyan: "#22d3ee",
-				white: "#e5e5e5",
-				brightBlack: "#5a5a5a",
-				brightRed: "#fca5a5",
-				brightGreen: "#86efac",
-				brightYellow: "#fde68a",
-				brightBlue: "#93c5fd",
-				brightMagenta: "#d8b4fe",
-				brightCyan: "#67e8f9",
-				brightWhite: "#f5f5f5",
-			},
+			theme: initial.theme,
 			cursorBlink: true,
 			disableStdin: false,   // user types directly in xterm — sent to pty via onData below
 			scrollback: 5000,
@@ -286,7 +286,17 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 		resizeObs.observe(containerRef.current);
 		window.setTimeout(syncPtySize, 200);
 
+		// Änderungen in den Plugin-Einstellungen sofort auf dieses Terminal anwenden.
+		const unsubSettings = onTerminalSettingsChange((s) => {
+			term.options.fontSize = s.fontSize;
+			term.options.theme = s.theme;
+			applyBackgroundVar(wrapRef.current, s);
+			try { fit.fit(); } catch (_) { /* ignore */ }
+			syncPtySize();
+		});
+
 		return () => {
+			unsubSettings();
 			resizeObs.disconnect();
 			dataDisposable.dispose();
 			document.removeEventListener("dragenter", onDocDragEnter, true);
@@ -339,7 +349,7 @@ export function XtermPane({ sessionName, ready }: XtermPaneProps): JSX.Element {
 	}, [ready, sessionName]);
 
 	return (
-		<div className="xterm-pane-wrap">
+		<div ref={wrapRef} className="xterm-pane-wrap">
 			<div ref={containerRef} className="xterm-pane" />
 		</div>
 	);

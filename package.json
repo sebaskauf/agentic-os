@@ -1,6 +1,6 @@
 {
 	"name": "agentic-os",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "Claude Code in einem eingebetteten Terminal für Obsidian",
 	"main": "main.js",
 	"type": "module",
